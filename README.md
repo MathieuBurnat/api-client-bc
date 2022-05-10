@@ -28,6 +28,15 @@
 
 ## Installation
 
+1. Configure the environment variables inside the `.env` file.
+
+```
+// The url of the database
+DATABASE_URL="postgres://user:password@localhost:5432/database"
+```
+
+2. Install dependencies.
+  
 ```bash
 $ npm install
 ```
@@ -50,6 +59,19 @@ $ npm run start:prod
 ```bash
 # unit tests
 $ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
+```
+
+## Database
+
+```bash
+# push schema
+$ npx prisma db push
 
 # e2e tests
 $ npm run test:e2e
