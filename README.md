@@ -67,17 +67,14 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Database
+## Database & Prisma
 
 ```bash
 # push schema
 $ npx prisma db push
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# lunch prisma studio
+$ npx prisma db push
 ```
 
 ## Support
