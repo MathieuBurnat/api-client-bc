@@ -10,7 +10,7 @@ generator client {
 
 model Client {
   id        String    @id @default(cuid())
-  card      String    @unique
+  card      String?    @unique
   firstname String
   lastname  String
   email     String    @unique
