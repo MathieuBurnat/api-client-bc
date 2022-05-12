@@ -1,11 +1,9 @@
-import { ClientsService } from './clients.service';
-import { Injectable, Res, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
 @Injectable()
 export class ClientsService {
-
   create(createClientDto: CreateClientDto) {
     return 'This action adds a new client';
   }
@@ -26,9 +24,7 @@ export class ClientsService {
     return `This action removes a #${id} client`;
   }
 
-  retrieve(id: number, qrcode: string) {
-    //return `This action retrieves the qrcode #${qrcode} for the client #${id}`;
-    const message = `This action retrieves the qrcode #${qrcode} for the client #${id}`;
-    return response.status(HttpStatus.BAD_REQUEST).send(message);
+  retrieve(id: string, qrcode: string) {
+    return `This action retrieves the qrcode #${qrcode} for the client #${id}`;
   }
 }
