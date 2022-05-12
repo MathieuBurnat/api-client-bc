@@ -8,13 +8,18 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id        String     @default(cuid()) @id
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String?
+model Client {
+  id        String    @id @default(cuid())
+  card      String    @unique
+  firstname String
+  lastname  String
+  email     String    @unique
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @updatedAt @map(name: "updated_at")
+  //relation
+  products  Product[]
+
+  @@map(name: "Clients")
 }
 
 model User {
