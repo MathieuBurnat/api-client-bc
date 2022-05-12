@@ -22,13 +22,16 @@ model Client {
   @@map(name: "Clients")
 }
 
-model User {
-  id            String       @default(cuid()) @id
-  name          String?
-  pseudo        String?
-  email         String?   @unique
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-  posts         Post[]
-  @@map(name: "users")
+model Product {
+  id        String   @id @default(cuid())
+  name      String
+  price     Float
+  qrcode    String
+  published Boolean  @default(true)
+  madeBy    String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+  //relation
+  owner     Client?  @relation(fields: [ownerId], references: [id])
+  ownerId   String?
 }
