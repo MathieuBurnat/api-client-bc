@@ -14,11 +14,7 @@ describe('ClientsService', () => {
     service = module.get<ClientsService>(ClientsService);
   });
 
-  describe('findAll', () => {
-    it('should return an array of parts', async () => {
-      const result = await service.findAll().statusCode;
-
-      expect(result.HttpCode).toBe(HttpCode.OK);
-    });
-  }); 
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
 });
