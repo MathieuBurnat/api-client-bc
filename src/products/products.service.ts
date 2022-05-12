@@ -6,8 +6,11 @@ import prisma from '../../lib/prisma';
 @Injectable()
 export class ProductsService {
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
-  }
+    return prisma.product.create({
+      data: {
+        ...createProductDto
+      },
+    });  }
 
   findAll() {
     return prisma.product.findMany();    

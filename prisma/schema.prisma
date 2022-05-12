@@ -25,10 +25,10 @@ model Client {
 model Product {
   id        String   @id @default(cuid())
   name      String
-  price     Float
-  qrcode    String
+  price     Decimal
+  qrcode    String?
   published Boolean  @default(true)
-  madeBy    String
+  madeBy    String?
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @updatedAt @map(name: "updated_at")
   //relation
