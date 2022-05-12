@@ -34,4 +34,17 @@ model Product {
   //relation
   owner     Client?  @relation(fields: [ownerId], references: [id])
   ownerId   String?
+  //relation
+  events    Event[]
+}
+
+model Event {
+  id        String     @id @default(cuid())
+  content   String
+  createdAt DateTime   @default(now()) @map(name: "created_at")
+  //relation product
+  Product   Product?   @relation(fields: [productId], references: [id])
+  productId String?
+}
+
 }
