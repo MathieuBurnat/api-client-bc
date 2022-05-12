@@ -1,3 +1,5 @@
+import { HttpCode } from '@nestjs/common';
+import { CreateClientDto } from './dto/create-client.dto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientsService } from './clients.service';
 
@@ -12,7 +14,11 @@ describe('ClientsService', () => {
     service = module.get<ClientsService>(ClientsService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+  describe('findAll', () => {
+    it('should return an array of parts', async () => {
+      const result = await service.findAll().statusCode;
+
+      expect(result.HttpCode).toBe(HttpCode.OK);
+    });
+  }); 
 });
