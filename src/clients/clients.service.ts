@@ -6,7 +6,12 @@ import prisma from '../../lib/prisma';
 @Injectable()
 export class ClientsService {
   create(createClientDto: CreateClientDto) {
-    return 'This action adds a new client';
+    // create a new client with prisma
+    return prisma.client.create({
+      data: {
+        ...createClientDto
+      },
+    });
   }
 
   findAll() {
