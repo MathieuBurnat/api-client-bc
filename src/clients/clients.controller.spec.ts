@@ -26,8 +26,26 @@ describe('ClientsController', () => {
     controller = module.get<ClientsController>(ClientsController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('Create a client', async () => {
+    // Create a client dynamically
+    let createClientDto = new CreateClientDto();
+    createClientDto = {
+      ...createClientDto,
+      firstname: 'Jorge',
+      lastname: 'Tellez',
+      email: 'JorgeTellez@mail.ch' + Math.random().toString(16).substr(2, 8),
+    };
+    // Create a client via the service
+    const result = await prisma.client.create({
+      data: {
+        ...createClientDto,
+      },
+    });
+
+    // Excpect the result to be a client
+    expect(result).toEqual(clientGoal);
+  });
+
   it('Get client - Find Many', async () => {
     const result = await prisma.client.findMany();
     expect(result[0]).toEqual(clientGoal);
