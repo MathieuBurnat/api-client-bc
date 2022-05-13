@@ -50,17 +50,28 @@ describe('ProductsController', () => {
     });
 
     // Excpect the result to be a product
-    expect(result).toEqual(productGoal);
+    expect(result.id).toEqual(productGoal.id);
+    expect(result.price).toEqual(productGoal.price);
+    expect(result.qrcode).toEqual(productGoal.qrcode);
+    expect(result.published).toEqual(productGoal.published);
   });
 
   it('Get product - Find Many', async () => {
     const result = await prisma.product.findMany();
-    expect(result[0]).toEqual(productGoal);
+
+    expect(result[0].id).toEqual(productGoal.id);
+    expect(result[0].price).toEqual(productGoal.price);
+    expect(result[0].qrcode).toEqual(productGoal.qrcode);
+    expect(result[0].published).toEqual(productGoal.published);
   });
 
   it('Get product - Find one', async () => {
     const result = await prisma.product.findFirst();
-    expect(result).toEqual(productGoal);
+
+    expect(result.id).toEqual(productGoal.id);
+    expect(result.price).toEqual(productGoal.price);
+    expect(result.qrcode).toEqual(productGoal.qrcode);
+    expect(result.published).toEqual(productGoal.published);
   });
 
   it("Extend product's warranty", async () => {
@@ -75,7 +86,9 @@ describe('ProductsController', () => {
         ),
       },
     });
-    expect(result).toEqual(productGoal);
+
+    expect(result.id).toEqual(productGoal.id);
+    expect(result.warrantyExpiresOn).toEqual(productGoal.warrantyExpiresOn);
   });
 
   it('Retrive product', async () => {
@@ -89,6 +102,8 @@ describe('ProductsController', () => {
         ownerId: client.id,
       },
     });
-    expect(result).toEqual(productGoal);
+    expect(result.id).toEqual(productGoal.id);
+    expect(result.warrantyExpiresOn).toEqual(productGoal.warrantyExpiresOn);
+    expect(result.ownerId).toEqual(productGoal.ownerId);
   });
 });
