@@ -8,12 +8,13 @@ export class ProductsService {
   create(createProductDto: CreateProductDto) {
     return prisma.product.create({
       data: {
-        ...createProductDto
+        ...createProductDto,
       },
-    });  }
+    });
+  }
 
   findAll() {
-    return prisma.product.findMany();    
+    return prisma.product.findMany();
   }
 
   findOne(id: string) {
