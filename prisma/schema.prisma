@@ -10,7 +10,7 @@ generator client {
 
 model Client {
   id        String    @id @default(cuid())
-  card      String?    @unique
+  card      String?   @unique @default(dbgenerated("gen_random_uuid()"))
   firstname String
   lastname  String
   email     String    @unique
@@ -50,7 +50,7 @@ model Event {
 }
 
 model EventType {
-  id      String @id @default(cuid())
+  id      String  @id @default(cuid())
   content String
   event   Event?  @relation(fields: [eventId], references: [id])
   eventId String? @unique
