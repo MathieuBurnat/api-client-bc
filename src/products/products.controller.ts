@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
 
 @Controller('products')
 export class ProductsController {
@@ -10,6 +11,11 @@ export class ProductsController {
   @Post('/create')
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
+  }
+
+  @Post('warranty/extend/')
+  extendWarranty(@Body() updateProductWarrantyDto: UpdateProductWarrantyDto) {
+    return this.productsService.extendWarranty(updateProductWarrantyDto);
   }
 
   @Get()

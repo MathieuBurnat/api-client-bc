@@ -1,7 +1,10 @@
+import { Product } from './entities/product.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import prisma from '../../lib/prisma';
+import { delay } from 'rxjs';
 
 @Injectable()
 export class ProductsService {
@@ -9,6 +12,22 @@ export class ProductsService {
     return prisma.product.create({
       data: {
         ...createProductDto,
+      },
+    });
+  }
+
+  async extendWarranty(updateProductWarrantyDto: UpdateProductWarrantyDto) {
+    const product = await this.findOne(updateProductWarrantyDto.id);
+    return await prisma.product.update({
+      where: {
+        id: product.id,
+      },
+      data: {
+        warrantyExpiresOn: new Date(
+          product.warrantyExpiresOn.setDate(
+            new Date().getDate() + updateProductWarrantyDto.delay,
+          ),
+        ),
       },
     });
   }
@@ -21,9 +40,10 @@ export class ProductsService {
     //find one product by id
     return prisma.product.findUnique({
       where: {
-        id: id
-      }
-    });  }
+        id: id,
+      },
+    });
+  }
 
   update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
