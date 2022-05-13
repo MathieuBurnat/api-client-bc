@@ -11,7 +11,7 @@ generator client {
 model Client {
   id        String    @id @default(cuid())
   card      String?   @unique @default(dbgenerated("gen_random_uuid()"))
-  firstname String
+  firstname String 
   lastname  String
   email     String    @unique
   createdAt DateTime  @default(now()) @map(name: "created_at")
@@ -26,7 +26,7 @@ model Product {
   id                String   @id @default(cuid())
   name              String
   price             Decimal
-  qrcode            String?
+  qrcode            String   @unique @map(name: "qrcode")
   published         Boolean  @default(true)
   madeBy            String?
   warrantyExpiresOn DateTime
