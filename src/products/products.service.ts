@@ -5,6 +5,7 @@ import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import prisma from '../../lib/prisma';
 import { delay } from 'rxjs';
+import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -12,6 +13,17 @@ export class ProductsService {
     return prisma.product.create({
       data: {
         ...createProductDto,
+      },
+    });
+  }
+
+  async retrieve(updateClientRetriveProductDto: UpdateClientRetriveProductDto) {
+    return await prisma.product.update({
+      where: {
+        qrcode: updateClientRetriveProductDto.qrcode,
+      },
+      data: {
+        ownerId: updateClientRetriveProductDto.ownerId,
       },
     });
   }
