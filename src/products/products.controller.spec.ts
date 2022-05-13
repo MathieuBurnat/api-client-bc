@@ -9,10 +9,10 @@ describe('ProductsController', () => {
   let controller: ProductsController;
   const productGoal = {
     id: expect.any(String),
-    ownerId: null,
+    ownerId: expect.any(String),
     name: expect.any(String),
     price: expect.any(Decimal),
-    qrcode: null,
+    qrcode: expect.any(String),
     published: expect.any(Boolean),
     madeBy: null,
     warrantyExpiresOn: expect.any(Date),
@@ -36,6 +36,7 @@ describe('ProductsController', () => {
       ...createProductDto,
       name: 'Product 1',
       price: new Decimal(10.95),
+      qrcode: Math.random().toString(16).substr(2, 8),
       published: true,
       warrantyExpiresOn: new Date(
         new Date().setDate(new Date().getDate() + 360),
@@ -72,6 +73,20 @@ describe('ProductsController', () => {
         warrantyExpiresOn: new Date(
           new Date().setDate(new Date().getDate() + 360),
         ),
+      },
+    });
+    expect(result).toEqual(productGoal);
+  });
+
+  it('Retrive product', async () => {
+    const client = await prisma.client.findFirst();
+    const product = await prisma.product.findFirst();
+    const result = await prisma.product.update({
+      where: {
+        qrcode: product.qrcode,
+      },
+      data: {
+        ownerId: client.id,
       },
     });
     expect(result).toEqual(productGoal);

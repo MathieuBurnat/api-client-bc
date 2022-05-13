@@ -3,6 +3,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
+import { UpdateClientRetriveProductDto } from './dto/update-clientRetrive-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -16,6 +17,13 @@ export class ProductsController {
   @Post('warranty/extend/')
   extendWarranty(@Body() updateProductWarrantyDto: UpdateProductWarrantyDto) {
     return this.productsService.extendWarranty(updateProductWarrantyDto);
+  }
+
+  @Post('/retrieve/')
+  retrieve(
+    @Body() updateClientRetriveProductDto: UpdateClientRetriveProductDto,
+  ) {
+    return this.productsService.retrieve(updateClientRetriveProductDto);
   }
 
   @Get()

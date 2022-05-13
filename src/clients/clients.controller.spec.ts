@@ -1,9 +1,11 @@
+import { Get } from '@nestjs/common';
 import { Decimal } from '@prisma/client/runtime';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientsController } from './clients.controller';
 import { ClientsService } from './clients.service';
 import prisma from '../../lib/prisma';
 import { CreateClientDto } from './dto/create-client.dto';
+import PrismaClient from '@prisma/client';
 
 describe('ClientsController', () => {
   let controller: ClientsController;

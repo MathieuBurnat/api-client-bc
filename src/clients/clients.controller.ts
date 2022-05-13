@@ -12,11 +12,6 @@ export class ClientsController {
     return this.clientsService.create(createClientDto);
   }
 
-  @Post('/retrieve/:id/:qrcode')
-  retrieve(@Param('id') id: string, @Param('qrcode') qrcode: string) {
-    return this.clientsService.retrieve(id, qrcode);
-  }
-
   @Get()
   findAll() {
     return this.clientsService.findAll();

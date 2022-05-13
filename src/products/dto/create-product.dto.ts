@@ -4,6 +4,7 @@ export class CreateProductDto {
   @IsNotEmpty()
   name: string;
   published: boolean;
+  qrcode: string;
 
   @IsNumber()
   price: Decimal;
