@@ -8,7 +8,12 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ProductListener } from './events/listeners/product.listener';
 
 @Module({
-  imports: [ClientsModule, ProductsModule, EventsModule, EventEmitterModule.forRoot()],
+  imports: [
+    ClientsModule,
+    ProductsModule,
+    EventsModule,
+    EventEmitterModule.forRoot(),
+  ],
   controllers: [AppController],
   providers: [AppService, ProductListener],
 })

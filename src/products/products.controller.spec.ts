@@ -4,6 +4,8 @@ import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import prisma from '../../lib/prisma';
 import { CreateProductDto } from './dto/create-product.dto';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ProductListener } from '../events/listeners/product.listener';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -22,8 +24,9 @@ describe('ProductsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [EventEmitterModule.forRoot()],
       controllers: [ProductsController],
-      providers: [ProductsService],
+      providers: [ProductsService, ProductListener],
     }).compile();
 
     controller = module.get<ProductsController>(ProductsController);
