@@ -14,18 +14,22 @@ export class EventsService {
   }
 
   findAll() {
-    return `This action returns all events`;
+    return prisma.event.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} event`;
-  }
+  findOne(id: string) {
+    //find one event by id
+    return prisma.event.findUnique({
+      where: {
+        id: id,
+      },
+    });  }
 
-  update(id: number, updateEventDto: UpdateEventDto) {
+  update(id: string, updateEventDto: UpdateEventDto) {
     return `This action updates a #${id} event`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} event`;
   }
 }
