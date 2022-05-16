@@ -23,4 +23,11 @@ export class ProductListener {
     console.log("A product's warranty has been extended");
     console.log(product);
   }
+
+  //handle and process on product's status change
+  @OnEvent('product.status.update')
+  handleStatusChangeEvent(product) {
+    console.log("A product's status has been changed to " + product.status);
+    console.log(product);
+  }
 }

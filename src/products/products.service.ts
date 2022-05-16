@@ -1,15 +1,28 @@
-import { Product } from './entities/product.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
-import { UpdateProductDto } from './dto/update-product.dto';
 import prisma from '../../lib/prisma';
 import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-product.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UpdateProductStatusDto } from './dto/update-product-status.dto';
+import { Status } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
   constructor(private eventEmitter: EventEmitter2) {}
+
+  findAll() {
+    return prisma.product.findMany();
+  }
+
+  findOne(id: string) {
+    //find one product by id
+    return prisma.product.findUnique({
+      where: {
+        id: id,
+      },
+    });
+  }
 
   async create(createProductDto: CreateProductDto) {
     const product = await prisma.product.create({
@@ -71,24 +84,44 @@ export class ProductsService {
     return product;
   }
 
-  findAll() {
-    return prisma.product.findMany();
-  }
+  async updateStatus(updateProductStatus: UpdateProductStatusDto) {
+    const currentProduct = await this.findOne(updateProductStatus.id);
 
-  findOne(id: string) {
-    //find one product by id
-    return prisma.product.findUnique({
-      where: {
-        id: id,
-      },
-    });
-  }
+    // Check if the currentProduct has the same status than the UpdateProductStatusDto
+    if (currentProduct.status === updateProductStatus.status) {
+      return {
+        statusCode: '400',
+        message: [
+          "The product's status is already " + updateProductStatus.status,
+        ],
+        error: 'Bad Request',
+      };
+    }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
+    // Check if the product's status is valid
+    // Then update the product's status
+    if (Object.values(Status).includes(updateProductStatus.status)) {
+      const product = await prisma.product.update({
+        where: {
+          id: updateProductStatus.id,
+        },
+        data: {
+          status: updateProductStatus.status,
+        },
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+      this.eventEmitter.emit('product.status.update', product);
+      return product;
+    } else {
+      //otherwise, return an error explaining that the status is invalid
+      return {
+        statusCode: '400',
+        message: [
+          "The product's status is invalid. It must be one of the following: " +
+            Object.values(Status),
+        ],
+        error: 'Bad Request',
+      };
+    }
   }
 }
