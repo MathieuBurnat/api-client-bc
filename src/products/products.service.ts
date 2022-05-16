@@ -18,14 +18,26 @@ export class ProductsService {
       },
     });
 
-    this.eventEmitter.emit('product.created', product)
     this.eventEmitter.emit('product.created', product);
     return product;
   }
 
   async retrieve(updateClientRetriveProductDto: UpdateClientRetriveProductDto) {
-    return await prisma.product.update({
     let product = await prisma.product.findUnique({
+      where: {
+        qrcode: updateClientRetriveProductDto.qrcode,
+      },
+    });
+
+    if (product.ownerId != null) {
+      return {
+        statusCode: '403',
+        message: ['We are sorry, this product has already an owner.'],
+        error: 'Forbidden',
+      };
+    }
+
+    product = await prisma.product.update({
       where: {
         qrcode: updateClientRetriveProductDto.qrcode,
       },
@@ -33,6 +45,7 @@ export class ProductsService {
         ownerId: updateClientRetriveProductDto.ownerId,
       },
     });
+
     this.eventEmitter.emit('product.retrieve', product);
     return product;
   }
