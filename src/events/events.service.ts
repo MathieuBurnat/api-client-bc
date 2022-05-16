@@ -6,6 +6,7 @@ import prisma from '../../lib/prisma';
 @Injectable()
 export class EventsService {
   create(createEventDto: CreateEventDto) {
+
     return prisma.event.create({
       data: {
         ...createEventDto,
