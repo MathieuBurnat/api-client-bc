@@ -10,3 +10,11 @@ export class ProductListener {
         console.log(product);
     }
 
+    //Handle and process on retrieve
+    @OnEvent('product.retrieve')
+    handleRetrieveEvent(product) {
+        // handle and process "OrderCreatedEvent" event
+        console.log("A product has been retrieved by " + product.ownerId);
+        console.log(product);
+    }
+}
