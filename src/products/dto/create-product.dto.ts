@@ -10,9 +10,9 @@ export class CreateProductDto {
   @IsNotEmpty()
   qrcode: string;
 
+  @IsNotEmpty()
+  warrantyExpiresOn: Date;
+
   @IsNumber()
   price: Decimal;
-
-  @IsDate()
-  warrantyExpiresOn: Date;
 }

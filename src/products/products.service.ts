@@ -6,15 +6,22 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import prisma from '../../lib/prisma';
 import { delay } from 'rxjs';
 import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-product.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ProductsService {
-  create(createProductDto: CreateProductDto) {
-    return prisma.product.create({
+  constructor(private eventEmitter: EventEmitter2){}
+
+  async create(createProductDto: CreateProductDto) {
+    
+    const product = await prisma.product.create({
       data: {
         ...createProductDto,
       },
     });
+
+    this.eventEmitter.emit('product.created', product)
+    return product;
   }
 
   async retrieve(updateClientRetriveProductDto: UpdateClientRetriveProductDto) {
