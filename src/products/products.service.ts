@@ -53,19 +53,22 @@ export class ProductsService {
   }
 
   async extendWarranty(updateProductWarrantyDto: UpdateProductWarrantyDto) {
-    const product = await this.findOne(updateProductWarrantyDto.id);
-    return await prisma.product.update({
+    const currentProduct = await this.findOne(updateProductWarrantyDto.id);
+    const product = await prisma.product.update({
       where: {
-        id: product.id,
+        id: currentProduct.id,
       },
       data: {
         warrantyExpiresOn: new Date(
-          product.warrantyExpiresOn.setDate(
+          currentProduct.warrantyExpiresOn.setDate(
             new Date().getDate() + updateProductWarrantyDto.delay,
           ),
         ),
       },
     });
+
+    this.eventEmitter.emit('product.warranty.extend', product);
+    return product;
   }
 
   findAll() {
