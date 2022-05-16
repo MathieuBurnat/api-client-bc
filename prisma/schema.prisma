@@ -48,11 +48,11 @@ model Event {
   productId String?
   //relation one to one eventType
   eventType   EventType?  @relation(fields: [eventTypeId], references: [id])
-  eventTypeId String? @unique
+  eventTypeId String?
 }
 
 model EventType {
   id      String  @id @default(cuid())
   content String
-  event   Event?
+  events   Event[]
 }
