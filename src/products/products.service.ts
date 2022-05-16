@@ -29,6 +29,7 @@ export class ProductsService {
       },
     });
 
+    //If the product's owner already exist, then it's not possible to retrieve the product
     if (product.ownerId != null) {
       return {
         statusCode: '403',
@@ -37,6 +38,7 @@ export class ProductsService {
       };
     }
 
+    // Otherwise, update the product with the new owner
     product = await prisma.product.update({
       where: {
         qrcode: updateClientRetriveProductDto.qrcode,
