@@ -23,5 +23,18 @@ export class EventsService {
       where: {
         id: id,
       },
-    });  }
+    });  
+  }
+
+  findAllTypes(){
+    return prisma.eventType.findMany();
+  }
+
+  findOneTypes(id: string){
+    return prisma.eventType.findUnique({
+      where: {
+        id: id,
+      },
+    });  
+  }
 }

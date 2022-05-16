@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { get } from 'http';
 
 @Controller('events')
 export class EventsController {
@@ -17,8 +18,20 @@ export class EventsController {
     return this.eventsService.findAll();
   }
 
+  @Get('/types')
+  findAllTypes(){
+    return this.eventsService.findAllTypes();
+  }
+
+  @Get('/types/:id')
+  findOneTypes(@Param('id') id: string){
+    return this.eventsService.findOneTypes(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(id);
   }
+
+
 }
