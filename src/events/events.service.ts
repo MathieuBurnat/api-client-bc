@@ -24,12 +24,4 @@ export class EventsService {
         id: id,
       },
     });  }
-
-  update(id: string, updateEventDto: UpdateEventDto) {
-    return `This action updates a #${id} event`;
-  }
-
-  remove(id: string) {
-    return `This action removes a #${id} event`;
-  }
 }
