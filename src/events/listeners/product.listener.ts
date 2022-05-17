@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EventsService } from '../events.service';
 import { CreateEventDto } from '../dto/create-event.dto';
-import prisma from '../../../lib/prisma';
 import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
 
 @Injectable()
