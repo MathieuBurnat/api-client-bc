@@ -15,7 +15,7 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @Post('warranty/extend/')
+  @Post('/warranty/extend/')
   extendWarranty(@Body() updateProductWarrantyDto: UpdateProductWarrantyDto) {
     return this.productsService.extendWarranty(updateProductWarrantyDto);
   }
@@ -35,6 +35,11 @@ export class ProductsController {
   @Get()
   findAll() {
     return this.productsService.findAll();
+  }
+
+  @Get(':id/events')
+  findOneGetEvents(@Param('id') id: string) {
+    return this.productsService.findOneGetEvents(id);
   }
 
   @Get(':id')

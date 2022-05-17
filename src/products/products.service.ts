@@ -24,6 +24,18 @@ export class ProductsService {
     });
   }
 
+  async findOneGetEvents(id: string) {
+    //find event's product by product's id
+
+    const events = await prisma.event.findMany({
+      where: {
+        productId: id,
+      },
+    });
+
+    return events;
+  }
+
   async create(createProductDto: CreateProductDto) {
     const product = await prisma.product.create({
       data: {
