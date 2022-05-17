@@ -1,12 +1,12 @@
-import { isDate, IsNotEmpty, IsNumber, IsDate } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateEventDto {
-    @IsNotEmpty()
-    content: string;
+  @IsNotEmpty()
+  content: string;
 
-    @IsNotEmpty()
-    productId: string;
+  @IsNotEmpty()
+  productId: string;
 
-    @IsNotEmpty()
-    eventTypeId: string;
+  @IsNotEmpty()
+  eventTypeId: string;
 }
