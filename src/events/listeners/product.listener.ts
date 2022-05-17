@@ -1,8 +1,11 @@
+import { Type } from './../../../node_modules/event-target-shim/index.d';
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EventsService } from '../events.service';
 import { CreateEventDto } from '../dto/create-event.dto';
 import prisma from '../../../lib/prisma';
+import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
+
 @Injectable()
 export class ProductListener {
   constructor(private readonly eventsService: EventsService) {}
@@ -49,6 +52,17 @@ export class ProductListener {
 
   //Push event to events service
   async pushEvent(event, product) {
+    const eventOnDb = await this.saveDataOnDB(event, product);
+    const eventOnBC = await this.saveDataOnBC(event, product);
+
+    console.log('Data stored on database');
+    console.log(eventOnDb);
+
+    console.log('Data stored on the blockchain');
+    console.log(eventOnBC);
+  }
+
+  async saveDataOnDB(event, product) {
     const eventType = await this.eventsService.getEventType(event.type);
 
     let createEventDto = new CreateEventDto();
@@ -60,7 +74,33 @@ export class ProductListener {
       eventTypeId: eventType.id,
     };
 
-    const e = await this.eventsService.create(createEventDto);
-    console.log(e);
+    return await this.eventsService.create(createEventDto);
+  }
+
+  async saveDataOnBC(event, product) {
+    const tx = Transaction.makeCreateTransaction(
+      // Store the event, the product, and a timestamp
+      { event: event, product: product, created_at: new Date().toString() },
+
+      // Metadata contains information about the transaction itself
+      // (can be `null` if not needed)
+      { what: event.content },
+
+      // A transaction needs an output
+      [
+        Transaction.makeOutput(
+          Transaction.makeEd25519Condition(process.env.public_key),
+        ),
+      ],
+      process.env.public_key,
+    );
+
+    const txSigned = Transaction.signTransaction(tx, process.env.private_key);
+
+    const conn = new Connection(process.env.API_PATH);
+
+    return await conn
+      .postTransactionCommit(txSigned)
+      .then((retrievedTx) => retrievedTx);
   }
 }
