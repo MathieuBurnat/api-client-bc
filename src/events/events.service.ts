@@ -6,7 +6,6 @@ import prisma from '../../lib/prisma';
 @Injectable()
 export class EventsService {
   create(createEventDto: CreateEventDto) {
-
     return prisma.event.create({
       data: {
         ...createEventDto,
@@ -24,18 +23,18 @@ export class EventsService {
       where: {
         id: id,
       },
-    });  
+    });
   }
 
-  findAllTypes(){
+  findAllTypes() {
     return prisma.eventType.findMany();
   }
 
-  findOneTypes(id: string){
+  findOneTypes(id: string) {
     return prisma.eventType.findUnique({
       where: {
         id: id,
       },
-    });  
+    });
   }
 }

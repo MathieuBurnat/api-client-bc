@@ -6,7 +6,7 @@ import { get } from 'http';
 
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) { }
+  constructor(private readonly eventsService: EventsService) {}
 
   @Post('/create')
   create(@Body() createEventDto: CreateEventDto) {
