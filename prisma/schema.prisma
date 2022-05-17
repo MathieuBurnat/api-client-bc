@@ -48,7 +48,6 @@ enum Status {
   OUT
 }
 
-
 model Event {
   id          String     @id @default(cuid())
   content     String
@@ -63,7 +62,6 @@ model Event {
 
 model EventType {
   id      String  @id @default(cuid())
-  content String
+  content String  @unique @map(name: "content")
   events  Event[]
 }
-

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
 import prisma from '../../lib/prisma';
 
 @Injectable()
@@ -34,6 +33,14 @@ export class EventsService {
     return prisma.eventType.findUnique({
       where: {
         id: id,
+      },
+    });
+  }
+
+  getEventType(eventType: string) {
+    return prisma.eventType.findUnique({
+      where: {
+        content: eventType,
       },
     });
   }
