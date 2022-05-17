@@ -24,6 +24,32 @@ describe('EventsController', () => {
     controller = module.get<EventsController>(EventsController);
   });
 
+  it('Event - Create a event', async () => {
+    let createEventDto = new CreateEventDto();
+    const product = await prisma.product.findFirst();
+    const eventType = await prisma.eventType.findFirst();
+
+    createEventDto = {
+      ...createEventDto,
+      content: '[Unit Testing] This is a test',
+      productId: product.id,
+      eventTypeId: eventType.id,
+    };
+
+    // Create the event
+    const result = await prisma.event.create({
+      data: {
+        ...createEventDto,
+      },
+    });
+
+    expect(result.id).toEqual(eventGoal.id);
+    expect(result.productId).toEqual(eventGoal.productId);
+    expect(result.content).toEqual(eventGoal.content);
+    expect(result.createdAt).toEqual(eventGoal.createdAt);
+    expect(result.eventTypeId).toEqual(eventGoal.eventTypeId);
+  });
+
   it('Get event - Find Many', async () => {
     const result = await prisma.event.findMany();
 
@@ -38,31 +64,5 @@ describe('EventsController', () => {
     expect(result.id).toEqual(eventGoal.id);
     expect(result.content).toEqual(eventGoal.content);
     expect(result.productId).toEqual(eventGoal.productId);
-  });
-
-  it('Event - Create a event', async () => {
-    let createEventDto = new CreateEventDto();
-    const product = await prisma.product.findFirst();
-    const eventType = await prisma.eventType.findFirst();
-  
-    createEventDto = {
-      ...createEventDto,
-      content: "[Unit Testing] This is a test",
-      productId: product.id,
-      eventTypeId: eventType.id,
-    }
-
-    // Create the event
-    const result = await prisma.event.create({
-      data: {
-        ...createEventDto,
-      },
-    });
-
-    expect(result.id).toEqual(eventGoal.id);
-    expect(result.productId).toEqual(eventGoal.productId);
-    expect(result.content).toEqual(eventGoal.content);
-    expect(result.createdAt).toEqual(eventGoal.createdAt);
-    expect(result.eventTypeId).toEqual(eventGoal.eventTypeId);
   });
 });
