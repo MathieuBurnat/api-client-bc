@@ -60,6 +60,9 @@ export class ProductListener {
 
     console.log('Data stored on the blockchain');
     console.log(eventOnBC);
+
+    console.log('Get data within the blockchain');
+    await this.getDataFromBC(product.id);
   }
 
   async saveDataOnDB(event, product) {
@@ -102,5 +105,13 @@ export class ProductListener {
     return await conn
       .postTransactionCommit(txSigned)
       .then((retrievedTx) => retrievedTx);
+  }
+
+  async getDataFromBC(productId) {
+    const conn = new Connection(process.env.API_PATH);
+
+    return await conn
+      .searchAssets(productId)
+      .then((assets) => console.log('Found assets with product id :', assets));
   }
 }
