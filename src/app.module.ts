@@ -7,6 +7,7 @@ import { EventsModule } from './events/events.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ProductListener } from './events/listeners/product.listener';
 import { EventsService } from './events/events.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EventsService } from './events/events.service';
     ProductsModule,
     EventsModule,
     EventEmitterModule.forRoot(),
+    ConfigModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService, ProductListener, EventsService],
