@@ -19,12 +19,12 @@ export class EventsController {
   }
 
   @Get('/types')
-  findAllTypes(){
+  findAllTypes() {
     return this.eventsService.findAllTypes();
   }
 
   @Get('/types/:id')
-  findOneTypes(@Param('id') id: string){
+  findOneTypes(@Param('id') id: string) {
     return this.eventsService.findOneTypes(id);
   }
 
@@ -32,6 +32,4 @@ export class EventsController {
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(id);
   }
-
-
 }
