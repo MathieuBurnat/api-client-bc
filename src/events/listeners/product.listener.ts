@@ -1,13 +1,15 @@
-import { Type } from './../../../node_modules/event-target-shim/index.d';
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EventsService } from '../events.service';
 import { CreateEventDto } from '../dto/create-event.dto';
-import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
+import { BlockchainsService } from 'src/blockchain/blockchains.service';
 
 @Injectable()
 export class ProductListener {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventsService: EventsService,
+    public blockchainsService: BlockchainsService,
+  ) {}
 
   //Handle and process on created
   @OnEvent('product.created')
@@ -52,7 +54,10 @@ export class ProductListener {
   //Push event to events service
   async pushEvent(event, product) {
     const eventOnDb = await this.saveDataOnDB(event, product);
-    const eventOnBC = await this.saveDataOnBC(event, product);
+    const eventOnBC = await this.blockchainsService.createTransaction(
+      event,
+      product,
+    );
 
     console.log('Data stored on database');
     console.log(eventOnDb);
@@ -61,7 +66,7 @@ export class ProductListener {
     console.log(eventOnBC);
 
     console.log('Get data within the blockchain');
-    await this.getDataFromBC(product.id);
+    await this.blockchainsService.getTransactions(product.id);
   }
 
   async saveDataOnDB(event, product) {
@@ -77,40 +82,5 @@ export class ProductListener {
     };
 
     return await this.eventsService.create(createEventDto);
-  }
-
-  async saveDataOnBC(event, product) {
-    const tx = Transaction.makeCreateTransaction(
-      // Store the event, the product, and a timestamp
-      { event: event, product: product, created_at: new Date().toString() },
-
-      // Metadata contains information about the transaction itself
-      // (can be `null` if not needed)
-      { what: event.content },
-
-      // A transaction needs an output
-      [
-        Transaction.makeOutput(
-          Transaction.makeEd25519Condition(process.env.public_key),
-        ),
-      ],
-      process.env.public_key,
-    );
-
-    const txSigned = Transaction.signTransaction(tx, process.env.private_key);
-
-    const conn = new Connection(process.env.API_PATH);
-
-    return await conn
-      .postTransactionCommit(txSigned)
-      .then((retrievedTx) => retrievedTx);
-  }
-
-  async getDataFromBC(productId) {
-    const conn = new Connection(process.env.API_PATH);
-
-    return await conn
-      .searchAssets(productId)
-      .then((assets) => console.log('Found assets with product id :', assets));
   }
 }
