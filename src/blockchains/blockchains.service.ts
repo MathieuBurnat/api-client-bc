@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import prisma from '../../lib/prisma';
+import { CreateBlockchainDto } from './dto/create-blockchain.dto';
+import { UpdateBlockchainDto } from './dto/update-blockchain.dto';
 import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
 
 @Injectable()
@@ -34,8 +35,12 @@ export class BlockchainsService {
   async getTransactions(productId) {
     const conn = new Connection(process.env.API_PATH);
 
-    return await conn
-      .searchAssets(productId)
-      .then((assets) => console.log('Found assets with product id :', assets));
+    return await conn.searchAssets(productId).then((assets) => assets);
+  }
+
+  // Dev options, use to generate an ed25519 keypair
+  // Normally keys should be buy on the internet (AKA wallet) but with bigchain service we can generate them with dev-tools
+  async generateKeys() {
+    return await new Ed25519Keypair();
   }
 }
