@@ -4,7 +4,26 @@ import prisma from '../../lib/prisma';
 
 @Injectable()
 export class EventsService {
-  create(createEventDto: CreateEventDto) {
+  async create(event, product) {
+    const eventType = await this.getEventType(event.type);
+
+    let createEventDto = new CreateEventDto();
+
+    createEventDto = {
+      ...createEventDto,
+      content: event.content,
+      productId: product.id,
+      eventTypeId: eventType.id,
+    };
+
+    return prisma.event.create({
+      data: {
+        ...createEventDto,
+      },
+    });
+  }
+
+  async createEvent(createEventDto: CreateEventDto) {
     return prisma.event.create({
       data: {
         ...createEventDto,
