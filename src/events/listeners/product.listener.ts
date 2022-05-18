@@ -54,19 +54,23 @@ export class ProductListener {
   //Push event to events service
   async pushEvent(event, product) {
     const eventOnDb = await this.saveDataOnDB(event, product);
-    const eventOnBC = await this.blockchainsService.createTransaction(
+    const eventOnBCPost = await this.blockchainsService.createTransaction(
       event,
       product,
     );
 
-    console.log('Data stored on database');
+    const eventOnBcGet = await this.blockchainsService.getTransactions(
+      product.id,
+    );
+
+    console.log('\n\n[ Data stored on database ]');
     console.log(eventOnDb);
 
-    console.log('Data stored on the blockchain');
-    console.log(eventOnBC);
+    console.log('\n\n[ Data stored on the blockchain ]');
+    console.log(eventOnBCPost);
 
-    console.log('Get data within the blockchain');
-    await this.blockchainsService.getTransactions(product.id);
+    console.log('\n\n[ Get data within the blockchain ]');
+    console.log(eventOnBcGet);
   }
 
   async saveDataOnDB(event, product) {
