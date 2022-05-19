@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
+import { CreateCommercialEventDto } from './dto/create-commercial-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { get } from 'http';
 
@@ -26,6 +27,11 @@ export class EventsController {
   @Get('/types/:id')
   findOneTypes(@Param('id') id: string) {
     return this.eventsService.findOneTypes(id);
+  }
+
+  @Post('/commercials/create')
+  CreateCommercial(@Body() createCommercialEventDto: CreateCommercialEventDto) {
+    return this.eventsService.createCommercial(createCommercialEventDto);
   }
 
   @Get('/commercials')
