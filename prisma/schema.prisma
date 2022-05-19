@@ -49,15 +49,26 @@ enum Status {
 }
 
 model Event {
-  id          String     @id @default(cuid())
-  content     String
-  createdAt   DateTime   @default(now()) @map(name: "created_at")
+  id                String           @id @default(cuid())
+  content           String
+  createdAt         DateTime         @default(now()) @map(name: "created_at")
   //relation product
-  Product     Product?   @relation(fields: [productId], references: [id])
-  productId   String?
+  Product           Product?         @relation(fields: [productId], references: [id])
+  productId         String?
   //relation one to one eventType
-  eventType   EventType? @relation(fields: [eventTypeId], references: [id])
-  eventTypeId String?
+  eventType         EventType?       @relation(fields: [eventTypeId], references: [id])
+  eventTypeId       String?
+  //relation one to one eventCommercial
+  eventCommercial   EventCommercial? @relation(fields: [eventCommercialId], references: [id])
+  eventCommercialId String?
+}
+
+model EventCommercial {
+  id              String   @id @default(cuid())
+  content         String
+  action          Decimal
+  shall_expire_on DateTime
+  Event           Event[]
 }
 
 model EventType {
