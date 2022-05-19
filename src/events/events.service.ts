@@ -56,6 +56,18 @@ export class EventsService {
     });
   }
 
+  findAllCommercials() {
+    return prisma.eventCommercial.findMany();
+  }
+
+  findOneCommercials(id: string) {
+    return prisma.eventCommercial.findUnique({
+      where: {
+        id: id,
+      },
+    });
+  }
+
   getEventType(eventType: string) {
     return prisma.eventType.findUnique({
       where: {

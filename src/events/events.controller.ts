@@ -28,6 +28,16 @@ export class EventsController {
     return this.eventsService.findOneTypes(id);
   }
 
+  @Get('/commercials')
+  findAllCommercials() {
+    return this.eventsService.findAllCommercials();
+  }
+
+  @Get('/commercials/:id')
+  findOneCommercials(@Param('id') id: string) {
+    return this.eventsService.findOneCommercials(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(id);
