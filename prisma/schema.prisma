@@ -65,7 +65,6 @@ model Event {
 
 model EventCommercial {
   id              String   @id @default(cuid())
-  content         String
   action          Decimal
   shall_expire_on DateTime
   Event           Event[]
