@@ -44,7 +44,7 @@ export class EventsService {
     });
   }
 
-  findAllTypes() {
+  findAllType() {
     return prisma.eventType.findMany();
   }
 
@@ -56,7 +56,7 @@ export class EventsService {
     });
   }
 
-  findAllCommercials() {
+  findAllCommercial() {
     return prisma.eventCommercial.findMany();
   }
 

@@ -19,8 +19,8 @@ export class EventsController {
   }
 
   @Get('/types')
-  findAllTypes() {
-    return this.eventsService.findAllTypes();
+  findAllType() {
+    return this.eventsService.findAllType();
   }
 
   @Get('/types/:id')
@@ -29,8 +29,8 @@ export class EventsController {
   }
 
   @Get('/commercials')
-  findAllCommercials() {
-    return this.eventsService.findAllCommercials();
+  findAllCommercial() {
+    return this.eventsService.findAllCommercial();
   }
 
   @Get('/commercials/:id')
