@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import prisma from '../../lib/prisma';
 import { CreateCommercialEventDto } from './dto/create-commercial-event.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class EventsService {
+  constructor(private eventEmitter: EventEmitter2) {}
+
   async create(event, product) {
     const eventType = await this.getEventType(event.type);
 
@@ -81,6 +84,20 @@ export class EventsService {
         eventCommercialId: commercialEvent.id,
       },
     });
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: createCommercialEventDto.productId,
+      },
+    });
+
+    // For the bloclchain : create an event with the commercial event within
+    const eventWithCommercial = {
+      ...event,
+      eventCommercial: commercialEvent,
+    };
+
+    this.eventEmitter.emit('commercial.event', eventWithCommercial, product);
 
     // Return the event
     return event;
