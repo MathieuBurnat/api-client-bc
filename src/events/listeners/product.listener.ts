@@ -18,7 +18,8 @@ export class ProductListener {
       content: 'A product has been created',
       type: 'PRODUCT_CREATED',
     };
-    this.pushEvent(event, product);
+    this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(event, product);
   }
 
   //Handle and process on retrieve
@@ -28,7 +29,8 @@ export class ProductListener {
       content: 'A product has been retrieved by ' + product.ownerId,
       type: 'PRODUCT_RETRIEVED',
     };
-    this.pushEvent(event, product);
+    this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(event, product);
   }
 
   //Handle and process on extendWarranty
@@ -38,7 +40,8 @@ export class ProductListener {
       content: "A product's warranty has been extended",
       type: 'PRODUCT_WARRANTY_EXTENDTED',
     };
-    this.pushEvent(event, product);
+    this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(event, product);
   }
 
   //handle and process on product's status change
@@ -48,12 +51,25 @@ export class ProductListener {
       content: "A product's status has been changed to " + product.status,
       type: product.status,
     };
-    this.pushEvent(event, product);
+    this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(event, product);
   }
 
-  //Push event to events service
-  async pushEvent(event, product) {
+  @OnEvent('commercial.event')
+  handleCommercialEvent(event, product) {
+    this.saveEventOnBlockchain(event, product);
+  }
+
+  //save the event on the database
+  async saveEventOnDataBase(event, product) {
     const eventOnDb = await this.eventsService.create(event, product);
+
+    console.log('\n\n[ Data stored on database ]');
+    console.log(eventOnDb);
+  }
+
+  //save the event on the blockchain
+  async saveEventOnBlockchain(event, product) {
     const eventOnBCPost = await this.blockchainsService.createTransaction(
       event,
       product,
@@ -62,9 +78,6 @@ export class ProductListener {
     const eventOnBcGet = await this.blockchainsService.getTransactions(
       product.id,
     );
-
-    console.log('\n\n[ Data stored on database ]');
-    console.log(eventOnDb);
 
     console.log('\n\n[ Data stored on the blockchain ]');
     console.log(eventOnBCPost);
