@@ -8,9 +8,6 @@ export class CreateProductDto {
   published: boolean;
 
   @IsNotEmpty()
-  qrcode: string;
-
-  @IsNotEmpty()
   warrantyExpiresOn: Date;
 
   @IsNumber()

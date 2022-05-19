@@ -26,7 +26,7 @@ model Product {
   id                String   @id @default(cuid())
   name              String
   price             Decimal
-  qrcode            String   @unique @map(name: "qrcode")
+  qrcode            String?  @unique @default(dbgenerated("gen_random_uuid()")) @map(name: "qrcode")
   published         Boolean  @default(true)
   madeBy            String?
   warrantyExpiresOn DateTime
