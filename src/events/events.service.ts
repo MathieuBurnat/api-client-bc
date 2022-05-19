@@ -57,12 +57,33 @@ export class EventsService {
     });
   }
 
-  createCommercial(CreateCommercialEventDto) {
-    return prisma.event.create({
+  // Create an commercial event
+  async createCommercial(createCommercialEventDto: CreateCommercialEventDto) {
+    // Get the eventId
+    const eventType = await this.getEventType(
+      createCommercialEventDto.eventTypeContent,
+    );
+
+    // Create the commercial event
+    const commercialEvent = await prisma.eventCommercial.create({
       data: {
-        ...CreateCommercialEventDto,
+        action: createCommercialEventDto.action,
+        shall_expire_on: createCommercialEventDto.shall_expire_on,
       },
     });
+
+    // Create the event and attach the commercial event id
+    const event = await prisma.event.create({
+      data: {
+        content: createCommercialEventDto.content,
+        productId: createCommercialEventDto.productId,
+        eventTypeId: eventType.id,
+        eventCommercialId: commercialEvent.id,
+      },
+    });
+
+    // Return the event
+    return event;
   }
 
   findAllCommercial() {

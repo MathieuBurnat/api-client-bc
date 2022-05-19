@@ -9,7 +9,7 @@ export class CreateCommercialEventDto {
   productId: string;
 
   @IsNotEmpty()
-  eventTypeId: string;
+  eventTypeContent: string;
 
   @IsNotEmpty()
   action: Decimal;
