@@ -28,17 +28,33 @@
 
 ## Installation
 
-1. Configure the environment variables inside the `.env` file.
+1. **Copy-Past** the file `.env_example` to `.env`
+2. Configure the environment variables inside the `.env` file.
 
-```
-// The url of the database
-DATABASE_URL="postgres://user:password@localhost:5432/database"
-```
 
 2. Install dependencies.
   
 ```bash
 npm install
+```
+
+3. Generate prisma
+```bash
+# generate schema
+npx prisma generate
+```
+
+4. Enjoy
+```bash
+npm run start
+```
+
+5. (Optional) Test
+
+It also possible to run tests via the following command : 
+
+```bash
+npm run test
 ```
 
 ## Running the app
