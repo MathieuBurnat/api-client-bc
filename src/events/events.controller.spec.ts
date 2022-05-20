@@ -3,6 +3,7 @@ import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
 import prisma from '../../lib/prisma';
 import { CreateEventDto } from './dto/create-event.dto';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('EventsController', () => {
   let controller: EventsController;
@@ -19,6 +20,7 @@ describe('EventsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [EventsController],
       providers: [EventsService],
+      imports: [EventEmitterModule.forRoot()],
     }).compile();
 
     controller = module.get<EventsController>(EventsController);
