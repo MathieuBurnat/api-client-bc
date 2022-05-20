@@ -11,7 +11,7 @@ generator client {
 model Client {
   id        String    @id @default(cuid())
   card      String?   @unique @default(dbgenerated("gen_random_uuid()"))
-  firstname String 
+  firstname String
   lastname  String
   email     String    @unique
   createdAt DateTime  @default(now()) @map(name: "created_at")
@@ -26,33 +26,52 @@ model Product {
   id                String   @id @default(cuid())
   name              String
   price             Decimal
-  qrcode            String   @unique @map(name: "qrcode")
+  qrcode            String?  @unique @default(dbgenerated("gen_random_uuid()")) @map(name: "qrcode")
   published         Boolean  @default(true)
   madeBy            String?
   warrantyExpiresOn DateTime
   createdAt         DateTime @default(now()) @map(name: "created_at")
   updatedAt         DateTime @updatedAt @map(name: "updated_at")
+  status            Status   @default(READY_TO_USE)
+
   //relation
-  owner             Client?  @relation(fields: [ownerId], references: [id])
-  ownerId           String?
+  owner   Client? @relation(fields: [ownerId], references: [id])
+  ownerId String?
+
   //relation
-  events            Event[]
+  events Event[]
+}
+
+enum Status {
+  READY_TO_USE
+  UNDER_REPAIR
+  OUT
 }
 
 model Event {
-  id        String     @id @default(cuid())
-  content   String
-  createdAt DateTime   @default(now()) @map(name: "created_at")
+  id                String           @id @default(cuid())
+  content           String
+  createdAt         DateTime         @default(now()) @map(name: "created_at")
   //relation product
-  Product   Product?   @relation(fields: [productId], references: [id])
-  productId String?
+  Product           Product?         @relation(fields: [productId], references: [id])
+  productId         String?
   //relation one to one eventType
-  eventType EventType?
+  eventType         EventType?       @relation(fields: [eventTypeId], references: [id])
+  eventTypeId       String?
+  //relation one to one eventCommercial
+  eventCommercial   EventCommercial? @relation(fields: [eventCommercialId], references: [id])
+  eventCommercialId String?
+}
+
+model EventCommercial {
+  id              String   @id @default(cuid())
+  action          Decimal
+  shall_expire_on DateTime
+  Event           Event[]
 }
 
 model EventType {
   id      String  @id @default(cuid())
-  content String
-  event   Event?  @relation(fields: [eventId], references: [id])
-  eventId String? @unique
+  content String  @unique @map(name: "content")
+  events  Event[]
 }

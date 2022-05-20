@@ -1,48 +1,15 @@
-import { Product } from './entities/product.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
-import { UpdateProductDto } from './dto/update-product.dto';
 import prisma from '../../lib/prisma';
-import { delay } from 'rxjs';
 import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-product.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UpdateProductStatusDto } from './dto/update-product-status.dto';
+import { Status } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
-  create(createProductDto: CreateProductDto) {
-    return prisma.product.create({
-      data: {
-        ...createProductDto,
-      },
-    });
-  }
-
-  async retrieve(updateClientRetriveProductDto: UpdateClientRetriveProductDto) {
-    return await prisma.product.update({
-      where: {
-        qrcode: updateClientRetriveProductDto.qrcode,
-      },
-      data: {
-        ownerId: updateClientRetriveProductDto.ownerId,
-      },
-    });
-  }
-
-  async extendWarranty(updateProductWarrantyDto: UpdateProductWarrantyDto) {
-    const product = await this.findOne(updateProductWarrantyDto.id);
-    return await prisma.product.update({
-      where: {
-        id: product.id,
-      },
-      data: {
-        warrantyExpiresOn: new Date(
-          product.warrantyExpiresOn.setDate(
-            new Date().getDate() + updateProductWarrantyDto.delay,
-          ),
-        ),
-      },
-    });
-  }
+  constructor(private eventEmitter: EventEmitter2) {}
 
   findAll() {
     return prisma.product.findMany();
@@ -57,11 +24,116 @@ export class ProductsService {
     });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async findOneGetEvents(id: string) {
+    //find event's product by product's id
+
+    const events = await prisma.event.findMany({
+      where: {
+        productId: id,
+      },
+    });
+
+    return events;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async create(createProductDto: CreateProductDto) {
+    const product = await prisma.product.create({
+      data: {
+        ...createProductDto,
+      },
+    });
+
+    this.eventEmitter.emit('product.created', product);
+    return product;
+  }
+
+  async retrieve(updateClientRetriveProductDto: UpdateClientRetriveProductDto) {
+    let product = await prisma.product.findUnique({
+      where: {
+        qrcode: updateClientRetriveProductDto.qrcode,
+      },
+    });
+
+    //If the product's owner already exist, then it's not possible to retrieve the product
+    if (product.ownerId != null) {
+      return {
+        statusCode: '403',
+        message: ['We are sorry, this product has already an owner.'],
+        error: 'Forbidden',
+      };
+    }
+
+    // Otherwise, update the product with the new owner
+    product = await prisma.product.update({
+      where: {
+        qrcode: updateClientRetriveProductDto.qrcode,
+      },
+      data: {
+        ownerId: updateClientRetriveProductDto.ownerId,
+      },
+    });
+
+    this.eventEmitter.emit('product.retrieve', product);
+    return product;
+  }
+
+  async extendWarranty(updateProductWarrantyDto: UpdateProductWarrantyDto) {
+    const currentProduct = await this.findOne(updateProductWarrantyDto.id);
+    const product = await prisma.product.update({
+      where: {
+        id: currentProduct.id,
+      },
+      data: {
+        warrantyExpiresOn: new Date(
+          currentProduct.warrantyExpiresOn.setDate(
+            new Date().getDate() + updateProductWarrantyDto.delay,
+          ),
+        ),
+      },
+    });
+
+    this.eventEmitter.emit('product.warranty.extend', product);
+    return product;
+  }
+
+  async updateStatus(updateProductStatus: UpdateProductStatusDto) {
+    const currentProduct = await this.findOne(updateProductStatus.id);
+
+    // Check if the currentProduct has the same status than the UpdateProductStatusDto
+    if (currentProduct.status === updateProductStatus.status) {
+      return {
+        statusCode: '400',
+        message: [
+          "The product's status is already " + updateProductStatus.status,
+        ],
+        error: 'Bad Request',
+      };
+    }
+
+    // Check if the product's status is valid
+    // Then update the product's status
+    if (Object.values(Status).includes(updateProductStatus.status)) {
+      const product = await prisma.product.update({
+        where: {
+          id: updateProductStatus.id,
+        },
+        data: {
+          status: updateProductStatus.status,
+        },
+      });
+
+      this.eventEmitter.emit('product.status.update', product);
+      return product;
+    } else {
+      //otherwise, return an error explaining that the status is invalid
+      return {
+        statusCode: '400',
+        message: [
+          "The product's status is invalid. It must be one of the following: " +
+            Object.values(Status),
+        ],
+        error: 'Bad Request',
+      };
+    }
   }
 }

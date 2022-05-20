@@ -4,6 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
 import { UpdateClientRetriveProductDto } from './dto/update-clientRetrive-product.dto';
+import { UpdateProductStatusDto } from './dto/update-product-status.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -14,7 +15,7 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @Post('warranty/extend/')
+  @Post('/warranty/extend/')
   extendWarranty(@Body() updateProductWarrantyDto: UpdateProductWarrantyDto) {
     return this.productsService.extendWarranty(updateProductWarrantyDto);
   }
@@ -26,23 +27,23 @@ export class ProductsController {
     return this.productsService.retrieve(updateClientRetriveProductDto);
   }
 
+  @Post('/status/update/')
+  updateStatus(@Body() updateProductStatusDto: UpdateProductStatusDto) {
+    return this.productsService.updateStatus(updateProductStatusDto);
+  }
+
   @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
+  @Get(':id/events')
+  findOneGetEvents(@Param('id') id: string) {
+    return this.productsService.findOneGetEvents(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
   }
 }

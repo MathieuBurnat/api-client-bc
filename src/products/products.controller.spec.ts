@@ -4,6 +4,10 @@ import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import prisma from '../../lib/prisma';
 import { CreateProductDto } from './dto/create-product.dto';
+import { ProductListener } from '../events/listeners/product.listener';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventsService } from '../events/events.service';
+import { BlockchainsService } from '../blockchains/blockchains.service';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -12,7 +16,6 @@ describe('ProductsController', () => {
     ownerId: expect.any(String),
     name: expect.any(String),
     price: expect.any(Decimal),
-    qrcode: expect.any(String),
     published: expect.any(Boolean),
     madeBy: null,
     warrantyExpiresOn: expect.any(Date),
@@ -22,8 +25,14 @@ describe('ProductsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [EventEmitterModule.forRoot()],
       controllers: [ProductsController],
-      providers: [ProductsService],
+      providers: [
+        ProductsService,
+        ProductListener,
+        EventsService,
+        BlockchainsService,
+      ],
     }).compile();
 
     controller = module.get<ProductsController>(ProductsController);
@@ -36,7 +45,6 @@ describe('ProductsController', () => {
       ...createProductDto,
       name: 'Product 1',
       price: new Decimal(10.95),
-      qrcode: Math.random().toString(16).substr(2, 8),
       published: true,
       warrantyExpiresOn: new Date(
         new Date().setDate(new Date().getDate() + 360),
@@ -52,7 +60,6 @@ describe('ProductsController', () => {
     // Excpect the result to be a product
     expect(result.id).toEqual(productGoal.id);
     expect(result.price).toEqual(productGoal.price);
-    expect(result.qrcode).toEqual(productGoal.qrcode);
     expect(result.published).toEqual(productGoal.published);
   });
 
@@ -61,7 +68,6 @@ describe('ProductsController', () => {
 
     expect(result[0].id).toEqual(productGoal.id);
     expect(result[0].price).toEqual(productGoal.price);
-    expect(result[0].qrcode).toEqual(productGoal.qrcode);
     expect(result[0].published).toEqual(productGoal.published);
   });
 
@@ -70,7 +76,6 @@ describe('ProductsController', () => {
 
     expect(result.id).toEqual(productGoal.id);
     expect(result.price).toEqual(productGoal.price);
-    expect(result.qrcode).toEqual(productGoal.qrcode);
     expect(result.published).toEqual(productGoal.published);
   });
 

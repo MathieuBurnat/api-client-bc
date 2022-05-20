@@ -3,12 +3,13 @@ import { isDate, IsNotEmpty, IsNumber, IsDate } from 'class-validator';
 export class CreateProductDto {
   @IsNotEmpty()
   name: string;
+
+  @IsNotEmpty()
   published: boolean;
-  qrcode: string;
+
+  @IsNotEmpty()
+  warrantyExpiresOn: Date;
 
   @IsNumber()
   price: Decimal;
-
-  @IsDate()
-  warrantyExpiresOn: Date;
 }
