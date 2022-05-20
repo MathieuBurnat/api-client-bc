@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Don't forget to see the [wiki](https://github.com/MathieuBurnat/api-client-bc/wiki) page !
 
 ## Installation
 
