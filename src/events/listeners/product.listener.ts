@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EventsService } from '../events.service';
-import { CreateEventDto } from '../dto/create-event.dto';
-import { BlockchainsService } from 'src/blockchains/blockchains.service';
+import { BlockchainsService } from '../../blockchains/blockchains.service';
 
 @Injectable()
 export class ProductListener {

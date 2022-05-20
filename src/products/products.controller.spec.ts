@@ -4,8 +4,10 @@ import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import prisma from '../../lib/prisma';
 import { CreateProductDto } from './dto/create-product.dto';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ProductListener } from '../events/listeners/product.listener';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventsService } from '../events/events.service';
+import { BlockchainsService } from '../blockchains/blockchains.service';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -25,7 +27,12 @@ describe('ProductsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [EventEmitterModule.forRoot()],
       controllers: [ProductsController],
-      providers: [ProductsService, ProductListener],
+      providers: [
+        ProductsService,
+        ProductListener,
+        EventsService,
+        BlockchainsService,
+      ],
     }).compile();
 
     controller = module.get<ProductsController>(ProductsController);
