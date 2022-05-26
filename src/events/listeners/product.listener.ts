@@ -37,7 +37,7 @@ export class ProductListener {
   handleExtendWarrantyEvent(product) {
     const event = {
       content: "A product's warranty has been extended",
-      type: 'PRODUCT_WARRANTY_EXTENDTED',
+      type: 'PRODUCT_WARRANTY_EXTENTED',
     };
     this.saveEventOnDataBase(event, product);
     this.saveEventOnBlockchain(event, product);
