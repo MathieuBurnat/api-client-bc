@@ -48,14 +48,20 @@ export class ProductsService {
   }
 
   async retrieve(updateClientRetriveProductDto: UpdateClientRetriveProductDto) {
+    console.log("product's qrcode: " + updateClientRetriveProductDto.qrcode);
+    console.log("client's id: " + updateClientRetriveProductDto.ownerId);
+
     let product = await prisma.product.findUnique({
       where: {
         qrcode: updateClientRetriveProductDto.qrcode,
       },
     });
 
+    console.log('product');
+    console.log(product);
+
     //If the product's owner already exist, then it's not possible to retrieve the product
-    if (product.ownerId != null) {
+    if (product.ownerId !== null) {
       return {
         statusCode: '403',
         message: ['We are sorry, this product has already an owner.'],
