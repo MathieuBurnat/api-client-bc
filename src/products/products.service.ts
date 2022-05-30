@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
 import prisma from '../../lib/prisma';
@@ -48,25 +48,18 @@ export class ProductsService {
   }
 
   async retrieve(updateClientRetriveProductDto: UpdateClientRetriveProductDto) {
-    console.log("product's qrcode: " + updateClientRetriveProductDto.qrcode);
-    console.log("client's id: " + updateClientRetriveProductDto.ownerId);
-
     let product = await prisma.product.findUnique({
       where: {
         qrcode: updateClientRetriveProductDto.qrcode,
       },
     });
 
-    console.log('product');
-    console.log(product);
-
     //If the product's owner already exist, then it's not possible to retrieve the product
     if (product.ownerId !== null) {
-      return {
-        statusCode: '403',
-        message: ['We are sorry, this product has already an owner.'],
-        error: 'Forbidden',
-      };
+      throw new HttpException(
+        'We are sorry, this product is already owned by someone.',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     // Otherwise, update the product with the new owner
