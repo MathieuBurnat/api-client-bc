@@ -14,7 +14,7 @@ export class IsEmailUnique implements ValidatorConstraintInterface {
       },
     });
 
-    // If the client exists, it means that the email is not unique
+    // If the client exist, it means that the email is not unique
     if (client) {
       return false;
     } else {
