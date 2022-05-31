@@ -6,7 +6,7 @@ import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-produc
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UpdateProductStatusDto } from './dto/update-product-status.dto';
 import { Status } from '@prisma/client';
-import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto copy';
+import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -97,10 +97,10 @@ export class ProductsService {
     return product;
   }
 
-  async generateQrcode(updateProductQrcodeDto: UpdateProductQrcodeDto){
+  async generateQrcode(updateProductQrcodeDto: UpdateProductQrcodeDto) {
     const product = await prisma.product.update({
       where: {
-        id: updateProductQrcodeDto.id,
+        id: updateProductQrcodeDto.productId,
       },
       data: {
         qrcode: uuidv4(),

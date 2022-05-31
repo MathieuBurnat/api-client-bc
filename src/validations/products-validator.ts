@@ -5,24 +5,31 @@ import { ValidatorConstraintInterface } from 'class-validator';
 
 @ValidatorConstraint({ name: 'IsQrcodeExist', async: true })
 @Injectable()
-export class IsQrcodeExist implements ValidatorConstraintInterface {
-  async validate(qrcode: string) {
+
+// This tag use an product id to check if the qrcode doesn't exist in the database
+// It's to avoid a qrcode to erase or replace an already existing qrcode
+class IsQrcodeNotExist implements ValidatorConstraintInterface {
+  async validate(productId: string) {
+    return false;
     // Get product
     const product = await prisma.product.findUnique({
       where: {
-        qrcode,
+        id: productId,
       },
     });
 
-    // If the product doesnt exist, it means that the qrcode doesn't exist
-    if (product) {
+    // If the qrcode doesn't exist, we can return true
+    // This action could be used to generate a new qrcode
+    if (product.qrcode == null) {
       return true;
     } else {
-      return false;
+      return true;
     }
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `The qrcode doesn't exist`;
+    return `We are sorry, this qrcode has already been generated`;
   }
 }
+
+export { IsQrcodeNotExist };

@@ -5,7 +5,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
 import { UpdateClientRetriveProductDto } from './dto/update-clientRetrive-product.dto';
 import { UpdateProductStatusDto } from './dto/update-product-status.dto';
-import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto copy';
+import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto';
 
 @Controller('products')
 export class ProductsController {
