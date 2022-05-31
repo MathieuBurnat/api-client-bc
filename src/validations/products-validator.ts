@@ -34,14 +34,25 @@ export class IsQrcodeExist implements ValidatorConstraintInterface {
 // This tag use an product id to check if the qrcode doesn't exist in the database
 // It's to avoid a qrcode to erase or replace an already existing qrcode
 export class IsQrcodeNotExist implements ValidatorConstraintInterface {
+  private message = 'We are sorry, this qrcode has already been generated';
+
   async validate(id: string) {
+    if (id == null) {
+      this.message = '';
+      return false;
+    }
     // Get product
+
     const product = await prisma.product.findUnique({
       where: {
         id,
       },
     });
 
+    if (product == null) {
+      this.message = 'Cannot find a product with this id';
+      return false;
+    }
     // If the qrcode doesn't exist, we can return true
     // This action could be used to generate a new qrcode
     if (product.qrcode == null) {
@@ -52,6 +63,6 @@ export class IsQrcodeNotExist implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `We are sorry, this qrcode has already been generated`;
+    return this.message;
   }
 }
