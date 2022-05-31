@@ -122,13 +122,10 @@ export class ProductsService {
 
     // Check if the currentProduct has the same status than the UpdateProductStatusDto
     if (currentProduct.status === updateProductStatus.status) {
-      return {
-        statusCode: '400',
-        message: [
-          "The product's status is already " + updateProductStatus.status,
-        ],
-        error: 'Bad Request',
-      };
+      throw new HttpException(
+        "The product's status is already " + updateProductStatus.status,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     // Check if the product's status is valid
