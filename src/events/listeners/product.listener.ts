@@ -43,6 +43,17 @@ export class ProductListener {
     this.saveEventOnBlockchain(event, product);
   }
 
+  // Handle and process when the qrcode is generated
+  @OnEvent('product.qrcode.generate')
+  handleQrcodeGenerateEvent(product) {
+    const event = {
+      content: "A product's qrcode has been generated",
+      type: 'PRODUCT_QRCODE_GENERATED',
+    };
+    this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(event, product);
+  }
+
   //handle and process on product's status change
   @OnEvent('product.status.update')
   handleStatusChangeEvent(product) {
@@ -54,6 +65,7 @@ export class ProductListener {
     this.saveEventOnBlockchain(event, product);
   }
 
+  // Handle and process on commercial events
   @OnEvent('commercial.event')
   handleCommercialEvent(event, product) {
     this.saveEventOnBlockchain(event, product);
