@@ -111,6 +111,12 @@ export class ProductsService {
     return product;
   }
 
+  // Return the status that a product could have
+  // Status is an enum
+  async getStatus() {
+    return Status;
+  }
+
   async updateStatus(updateProductStatus: UpdateProductStatusDto) {
     const currentProduct = await this.findOne(updateProductStatus.id);
 

@@ -33,6 +33,11 @@ export class ProductsController {
     return this.productsService.generateQrcode(updateProductQrcodeDto);
   }
 
+  @Get('/status/')
+  getStatus() {
+    return this.productsService.getStatus();
+  }
+
   @Post('/status/update/')
   updateStatus(@Body() updateProductStatusDto: UpdateProductStatusDto) {
     return this.productsService.updateStatus(updateProductStatusDto);
