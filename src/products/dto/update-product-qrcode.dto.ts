@@ -5,5 +5,5 @@ import { Validate } from 'class-validator';
 export class UpdateProductQrcodeDto {
   @IsNotEmpty()
   @Validate(IsQrcodeNotExist)
-  productId: string;
+  id: string;
 }

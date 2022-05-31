@@ -100,7 +100,7 @@ export class ProductsService {
   async generateQrcode(updateProductQrcodeDto: UpdateProductQrcodeDto) {
     const product = await prisma.product.update({
       where: {
-        id: updateProductQrcodeDto.productId,
+        id: updateProductQrcodeDto.id,
       },
       data: {
         qrcode: uuidv4(),
