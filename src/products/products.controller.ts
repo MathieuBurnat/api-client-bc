@@ -48,7 +48,7 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-  @Get(':id/events')
+  @Get('/events/:id')
   findOneGetEvents(@Param('id') id: string) {
     return this.productsService.findOneGetEvents(id);
   }
