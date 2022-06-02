@@ -14,7 +14,11 @@ export class ProductsService {
   constructor(private eventEmitter: EventEmitter2) {}
 
   findAll() {
-    return prisma.product.findMany();
+    return prisma.product.findMany({
+      include: {
+        owner: true,
+      },
+    });
   }
 
   findOne(id: string) {
