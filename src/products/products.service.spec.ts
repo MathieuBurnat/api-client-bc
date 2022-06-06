@@ -26,7 +26,7 @@ describe('ProductsController', () => {
     createdAt: expect.any(Date),
     updatedAt: expect.any(Date),
   };
-  const productsService = new ProductsService(null);
+  const productsService = new ProductsService(new EventEmitter2());
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

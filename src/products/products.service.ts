@@ -84,6 +84,7 @@ export class ProductsService {
 
   async extendWarranty(updateProductWarrantyDto: UpdateProductWarrantyDto) {
     const currentProduct = await this.findOne(updateProductWarrantyDto.id);
+
     const product = await prisma.product.update({
       where: {
         id: currentProduct.id,
