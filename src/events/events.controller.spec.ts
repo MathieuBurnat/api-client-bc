@@ -3,7 +3,9 @@ import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
 import prisma from '../../lib/prisma';
 import { CreateEventDto } from './dto/create-event.dto';
+import { CreateCommercialEventDto } from './dto/create-commercial-event.dto';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { Decimal } from '@prisma/client/runtime';
 
 describe('EventsController', () => {
   let controller: EventsController;
@@ -42,6 +44,45 @@ describe('EventsController', () => {
     const result = await prisma.event.create({
       data: {
         ...createEventDto,
+      },
+    });
+
+    expect(result.id).toEqual(eventGoal.id);
+    expect(result.productId).toEqual(eventGoal.productId);
+    expect(result.content).toEqual(eventGoal.content);
+    expect(result.createdAt).toEqual(eventGoal.createdAt);
+    expect(result.eventTypeId).toEqual(eventGoal.eventTypeId);
+  });
+
+  it('Event - Create a commercial event', async () => {
+    let createCommercialEventDto = new CreateCommercialEventDto();
+    const product = await prisma.product.findFirst();
+    const eventType = await prisma.eventType.findFirst();
+
+    createCommercialEventDto = {
+      ...createCommercialEventDto,
+      content: '[Unit Testing] This is a test',
+      productId: product.id,
+      eventTypeContent: eventType.content,
+      action: new Decimal(20),
+      shall_expire_on: new Date(),
+    };
+
+    // Create the commercial event
+    const commercialEvent = await prisma.eventCommercial.create({
+      data: {
+        action: createCommercialEventDto.action,
+        shall_expire_on: createCommercialEventDto.shall_expire_on,
+      },
+    });
+
+    // Create the event and attach the commercial event id
+    const result = await prisma.event.create({
+      data: {
+        content: createCommercialEventDto.content,
+        productId: createCommercialEventDto.productId,
+        eventTypeId: eventType.id,
+        eventCommercialId: commercialEvent.id,
       },
     });
 
