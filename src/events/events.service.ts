@@ -8,25 +8,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 export class EventsService {
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async create(event, product) {
-    const eventType = await this.getEventType(event.type);
-
-    let createEventDto = new CreateEventDto();
-
-    createEventDto = {
-      ...createEventDto,
-      content: event.content,
-      productId: product.id,
-      eventTypeId: eventType.id,
-    };
-
-    return prisma.event.create({
-      data: {
-        ...createEventDto,
-      },
-    });
-  }
-
+  // Create an event with CreateEventDto
   async createEvent(createEventDto: CreateEventDto) {
     return prisma.event.create({
       data: {

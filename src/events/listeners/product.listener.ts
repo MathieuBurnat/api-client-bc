@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EventsService } from '../events.service';
 import { BlockchainsService } from '../../blockchains/blockchains.service';
+import { CreateEventDto } from '../dto/create-event.dto';
 
 @Injectable()
 export class ProductListener {
@@ -73,7 +74,18 @@ export class ProductListener {
 
   //save the event on the database
   async saveEventOnDataBase(event, product) {
-    const eventOnDb = await this.eventsService.create(event, product);
+    const eventType = await this.eventsService.getEventType(event.type);
+
+    let createEventDto = new CreateEventDto();
+
+    createEventDto = {
+      ...createEventDto,
+      content: event.content,
+      productId: product.id,
+      eventTypeId: eventType.id,
+    };
+
+    const eventOnDb = await this.eventsService.createEvent(createEventDto);
 
     console.log('\n\n[ Data stored on database ]');
     console.log(eventOnDb);
