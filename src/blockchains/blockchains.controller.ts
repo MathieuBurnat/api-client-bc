@@ -1,7 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { BlockchainsService } from './blockchains.service';
-import { CreateBlockchainDto } from './dto/create-blockchain.dto';
-import { UpdateBlockchainDto } from './dto/update-blockchain.dto';
 
 @Controller('blockchains')
 export class BlockchainsController {
