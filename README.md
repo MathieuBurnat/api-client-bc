@@ -41,6 +41,29 @@ DATABASE_URL="postgres://user:password@localhost:5432/database"
 npm install
 ```
 
+3. Don't forget to seed the database. (See the Database & Prisma section)
+
+4. Run the application.
+```bash
+npm run start
+```
+
+## Database & Prisma
+
+```bash
+# seed database
+npx prisma db seed
+
+# push schema
+npx prisma db push
+
+# lunch prisma studio
+npx prisma db push
+
+# generate schema
+npx prisma generate
+```
+
 ## Running the app
 
 ```bash
@@ -65,22 +88,6 @@ npm run test:e2e
 
 # test coverage
 npm run test:cov
-```
-
-## Database & Prisma
-
-```bash
-# seed database
-npx prisma db seed
-
-# push schema
-npx prisma db push
-
-# lunch prisma studio
-npx prisma db push
-
-# generate schema
-npx prisma generate
 ```
 
 ## Support
