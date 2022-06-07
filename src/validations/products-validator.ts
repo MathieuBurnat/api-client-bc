@@ -58,6 +58,7 @@ export class IsQrcodeNotExist implements ValidatorConstraintInterface {
     if (product.qrcode == null) {
       return true;
     } else {
+      this.message = 'We are sorry, this qrcode has already been generated';
       return false;
     }
   }
