@@ -13,4 +13,9 @@ export class BlockchainsController {
   findAll(@Param('id') id: string) {
     return this.blockchainsService.getTransactions(id);
   }
+
+  @Get('/test/:id')
+  test(@Param('id') id: string) {
+    return this.blockchainsService.test(id);
+  }
 }

@@ -16,4 +16,8 @@ export class BlockchainsService {
   async generateKeys() {
     return await this.bigchaindbAdapter.generateKeys();
   }
+
+  async test(id) {
+    return await this.bigchaindbAdapter.test(id);
+  }
 }

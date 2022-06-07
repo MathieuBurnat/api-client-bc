@@ -40,4 +40,10 @@ export class BigchaindbAdapter {
   async generateKeys() {
     return await new Ed25519Keypair();
   }
+
+  async test(id) {
+    const conn = new Connection(process.env.API_PATH);
+
+    return await conn.getTransaction(id).then((assets) => assets);
+  }
 }
