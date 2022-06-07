@@ -14,6 +14,7 @@ const load = async () => {
         { slug: 'Warranty extented', content: 'PRODUCT_WARRANTY_EXTENTED' },
         { slug: 'Created', content: 'PRODUCT_CREATED' },
         { slug: 'Retrieved', content: 'PRODUCT_RETRIEVED' },
+        { slug: 'qrcode generated', content: 'PRODUCT_QRCODE_GENERATED' },
         { slug: 'Is ready to use', content: 'READY_TO_USE' },
         { slug: 'Is under repair', content: 'UNDER_REPAIR' },
         { slug: 'Is OUT', content: 'OUT' },
