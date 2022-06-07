@@ -37,6 +37,9 @@ export class ProductsService {
       where: {
         productId: id,
       },
+      include: {
+        eventType: true,
+      },
     });
 
     return events;
