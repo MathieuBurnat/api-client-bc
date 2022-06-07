@@ -70,6 +70,9 @@ npm run test:cov
 ## Database & Prisma
 
 ```bash
+# seed database
+npx prisma db seed
+
 # push schema
 npx prisma db push
 
