@@ -13,57 +13,57 @@ export class ProductListener {
 
   //Handle and process on created
   @OnEvent('product.created')
-  handleCreatedEvent(product) {
+  async handleCreatedEvent(product) {
     const event = {
       content: 'A product has been created',
       type: 'PRODUCT_CREATED',
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+    const e = await this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(e, product);
   }
 
   //Handle and process on retrieve
   @OnEvent('product.retrieve')
-  handleRetrieveEvent(product) {
+  async handleRetrieveEvent(product) {
     const event = {
       content: 'A product has been retrieved by ' + product.ownerId,
       type: 'PRODUCT_RETRIEVED',
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+    const e = await this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(e, product);
   }
 
   //Handle and process on extendWarranty
   @OnEvent('product.warranty.extend')
-  handleExtendWarrantyEvent(product) {
+  async handleExtendWarrantyEvent(product) {
     const event = {
       content: "A product's warranty has been extended",
       type: 'PRODUCT_WARRANTY_EXTENTED',
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+    const e = await this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(e, product);
   }
 
   // Handle and process when the qrcode is generated
   @OnEvent('product.qrcode.generate')
-  handleQrcodeGenerateEvent(product) {
+  async handleQrcodeGenerateEvent(product) {
     const event = {
       content: "A product's qrcode has been generated",
       type: 'PRODUCT_QRCODE_GENERATED',
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+    const e = await this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(e, product);
   }
 
   //handle and process on product's status change
   @OnEvent('product.status.update')
-  handleStatusChangeEvent(product) {
+  async handleStatusChangeEvent(product) {
     const event = {
       content: "A product's status has been changed to " + product.status,
       type: product.status,
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+    const e = await this.saveEventOnDataBase(event, product);
+    this.saveEventOnBlockchain(e, product);
   }
 
   // Handle and process on commercial events
@@ -89,6 +89,7 @@ export class ProductListener {
 
     console.log('\n\n[ Data stored on database ]');
     console.log(eventOnDb);
+    return eventOnDb;
   }
 
   //save the event on the blockchain
