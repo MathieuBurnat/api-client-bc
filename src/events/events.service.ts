@@ -97,8 +97,8 @@ export class EventsService {
     });
   }
 
-  getEventType(eventType: string) {
-    return prisma.eventType.findUnique({
+  async getEventType(eventType: string) {
+    return await prisma.eventType.findUnique({
       where: {
         content: eventType,
       },
