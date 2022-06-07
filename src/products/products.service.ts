@@ -63,11 +63,25 @@ export class ProductsService {
       },
     });
 
+    let client = await prisma.client.findUnique({
+      where: {
+        id: updateClientRetriveProductDto.ownerId,
+      },
+    });
+
     //If the product's owner already exist, then it's not possible to retrieve the product
     if (product.ownerId !== null) {
       throw new HttpException(
         'We are sorry, this product is already owned by someone.',
         HttpStatus.FORBIDDEN,
+      );
+    }
+
+    //If the owner is null, then it doesn't exist
+    if (client == null) {
+      throw new HttpException(
+        "We are sorry, this client doesn't exist.",
+        HttpStatus.BAD_REQUEST,
       );
     }
 
