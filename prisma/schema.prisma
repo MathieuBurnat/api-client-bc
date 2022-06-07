@@ -2,7 +2,7 @@
 datasource db {
   provider = "postgresql"
   // Don't forget to set this value in .env file
-  url      = env("DATABASE_URL") 
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -74,5 +74,6 @@ model EventCommercial {
 model EventType {
   id      String  @id @default(cuid())
   content String  @unique @map(name: "content")
+  slug    String  @unique @map(name: "slug")
   events  Event[]
 }
