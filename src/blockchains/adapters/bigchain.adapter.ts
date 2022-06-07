@@ -19,6 +19,7 @@ export class BigchaindbAdapter {
       process.env.public_key,
     );
 
+    // Sign the transaction with the private key
     const txSigned = Transaction.signTransaction(tx, process.env.private_key);
 
     const conn = new Connection(process.env.API_PATH);
