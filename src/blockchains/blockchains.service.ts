@@ -13,6 +13,10 @@ export class BlockchainsService {
     return await this.bigchaindbAdapter.getAssets(productId);
   }
 
+  async getTransactions(id) {
+    return await this.bigchaindbAdapter.getTransactions(id);
+  }
+
   async generateKeys() {
     return await this.bigchaindbAdapter.generateKeys();
   }
@@ -26,9 +30,5 @@ export class BlockchainsService {
   // Verfify the authenticity of a public key
   async verifyPublicKey(id) {
     return await this.bigchaindbAdapter.verifyPublicKey(id);
-  }
-
-  async test(id) {
-    return await this.bigchaindbAdapter.test(id);
   }
 }

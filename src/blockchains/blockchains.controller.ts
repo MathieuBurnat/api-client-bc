@@ -9,8 +9,8 @@ export class BlockchainsController {
     return this.blockchainsService.generateKeys();
   }
 
-  @Get('assets/:id')
-  findAll(@Param('id') id: string) {
+  @Get('/assets/:id')
+  getAssets(@Param('id') id: string) {
     return this.blockchainsService.getAssets(id);
   }
 
@@ -24,8 +24,8 @@ export class BlockchainsController {
     return this.blockchainsService.verifyPublicKey(id);
   }
 
-  @Get('/test/:id')
-  test(@Param('id') id: string) {
-    return this.blockchainsService.test(id);
+  @Get('/transactions/:id')
+  getTransactions(@Param('id') id: string) {
+    return this.blockchainsService.getTransactions(id);
   }
 }
