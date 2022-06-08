@@ -99,9 +99,7 @@ export class ProductListener {
       product,
     );
 
-    const eventOnBcGet = await this.blockchainsService.getTransactions(
-      product.id,
-    );
+    const eventOnBcGet = await this.blockchainsService.getAssets(product.id);
 
     console.log('\n\n[ Data stored on the blockchain ]');
     console.log(eventOnBCPost);

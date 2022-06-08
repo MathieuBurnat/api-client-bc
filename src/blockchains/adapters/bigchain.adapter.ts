@@ -2,7 +2,6 @@ import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
 import prisma from '../../../lib/prisma';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { pluck } from 'rxjs';
-
 export class BigchaindbAdapter {
   async createTransaction(event, product) {
     const tx = Transaction.makeCreateTransaction(
@@ -45,23 +44,7 @@ export class BigchaindbAdapter {
     // Verify if the events from the database is the same than the events from the blockchain
 
     // *** Events on database ***
-    // Get the events from the database
-    let DB_Events = await prisma.event.findMany({
-      where: {
-        productId,
-      },
-    });
-
-    // Throw an error if there are no events in the database
-    if (DB_Events.length <= 0) {
-      throw new HttpException(
-        'We are sorry, this productId is referred to any event within the database',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    // Sort Db events by id
-    DB_Events = DB_Events.sort((a, b) => a.id.localeCompare(b.id));
+    const DB_Events = await getPrettyDbEvents(productId);
 
     // *** Events on blockchain ***
 
@@ -84,7 +67,7 @@ export class BigchaindbAdapter {
     if (JSON.stringify(DB_Events) === JSON.stringify(BC_Events)) {
       console.log('✅ objects are equal');
 
-      BC_Events = CertifyEvents(BC_Events);
+      //BC_Events = await CertifyEvents(BC_Events);
     } else {
       console.log('⛔️ objects are NOT equal');
     }
@@ -114,14 +97,20 @@ export class BigchaindbAdapter {
 }
 // Certify the events
 // Return the events with the tag 'verified' set true if it is
-function CertifyEvents(events) {
+async function CertifyEvents(events) {
   const certifiedEvents = [];
   let event;
 
-  events.forEach((e) => {
-    event = CertifyEvent(e);
+  for (let i = 0; i < events.length; i++) {
+    event = await CertifyEvent(events[i]);
     certifiedEvents.push(event);
-  });
+  }
+  /*
+  events.forEach((e) => {
+    event = await CertifyEvent(e);
+    certifiedEvents.push(event);
+  });*/
+
   return certifiedEvents;
 }
 
@@ -136,5 +125,36 @@ async function CertifyEvent(event) {
   // Get the transaction of the event
   const transaction = await this.getAssets(event.id);
 
+  CertifyPublicKey(transaction);
   return false;
 }
+
+async function CertifyPublicKey(publicKey) {
+  console.log('Public key is :');
+  console.log(publicKey);
+  return false;
+}
+
+//Return the product's events within the database sorted by id
+async function getPrettyDbEvents(productId) {
+  // Get the events from the database
+  let DB_Events = await prisma.event.findMany({
+    where: {
+      productId,
+    },
+  });
+
+  // Throw an error if there are no events in the database
+  if (DB_Events.length <= 0) {
+    throw new HttpException(
+      'We are sorry, this productId is referred to any event within the database',
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  // Sort Db events by id
+  DB_Events = DB_Events.sort((a, b) => a.id.localeCompare(b.id));
+  return DB_Events;
+}
+
+//Return the product's events on the blockchain sorted by id
