@@ -79,9 +79,9 @@ export class BigchaindbAdapter {
           };
           console.log(
             '✅ Event ' +
-              event.id +
-              ' is certified by ' +
-              transaction.outputs[0].public_keys[0],
+            event.id +
+            ' is certified by ' +
+            transaction.outputs[0].public_keys[0],
           );
         } else {
           event = {
@@ -138,6 +138,9 @@ async function getPrettyDbEvents(productId) {
   let DB_Events = await prisma.event.findMany({
     where: {
       productId,
+    },
+    include: {
+      eventType: true,
     },
   });
 

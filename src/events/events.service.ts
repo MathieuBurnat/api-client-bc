@@ -14,6 +14,9 @@ export class EventsService {
       data: {
         ...createEventDto,
       },
+      include: {
+        eventType: true,
+      },
     });
   }
 
