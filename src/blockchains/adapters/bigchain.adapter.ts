@@ -47,10 +47,7 @@ export class BigchaindbAdapter {
     const DB_Events = await getPrettyDbEvents(productId);
 
     // *** Events on blockchain ***
-
-    //Get the events from the blockchain
     const BC_Events = await getPrettyBcEvents(await this.getAssets(productId));
-
 
     // ** Render the result **
     console.log('\n\nDB Events');
@@ -59,20 +56,41 @@ export class BigchaindbAdapter {
     console.log('\n\nBC Events');
     console.log(BC_Events);
 
+    const certifiedEvents = [];
     if (JSON.stringify(DB_Events) === JSON.stringify(BC_Events)) {
       console.log('✅ objects are equal');
 
-      //BC_Events = await CertifyEvents(BC_Events);
+      let event;
+      for (let i = 0; i < BC_Events.length; i++) {
+        const asset = await this.getAssets(BC_Events[i].id);
+        console.log('\n\nAsset: ', asset);
+        const transaction = await this.getTransactions(asset[0].id);
+        console.log('\n\ntransaction: ', transaction);
+
+        // -- [ Second check ] --
+        // Verify the authenticity of the events from the blockchain
+        // Well the event's public key need to be known
+
+        // Return the events with the tag 'verified' if it is
+        // If the public key of the event if certified, set the tag certified to true
+        if (CertifyPublicKey(transaction.outputs[0].public_keys[0])) {
+          event = {
+            ...BC_Events[i],
+            certified: true,
+          };
+        } else {
+          event = {
+            ...BC_Events[i],
+            certified: false,
+          };
+        }
+        certifiedEvents.push(event);
+      }
     } else {
       console.log('⛔️ objects are NOT equal');
     }
 
-    // -- [ Second check ] --
-    // Verify the authenticity of the events from the blockchain
-    // Well the event's public key need to be known
-
-    // Return the events with the tag 'verified' if it is
-    return true;
+    return certifiedEvents;
   }
 
   async verifyPublicKey(id) {
@@ -84,53 +102,24 @@ export class BigchaindbAdapter {
     return await new Ed25519Keypair();
   }
 
-  async test(id) {
+  async getTransactions(id) {
     const conn = new Connection(process.env.API_PATH);
 
     return await conn.getTransaction(id).then((assets) => assets);
   }
 }
-// Certify the events
-// Return the events with the tag 'verified' set true if it is
-async function CertifyEvents(events) {
-  const certifiedEvents = [];
-  let event;
 
-  for (let i = 0; i < events.length; i++) {
-    event = await CertifyEvent(events[i]);
-    certifiedEvents.push(event);
-  }
-  /*
-  events.forEach((e) => {
-    event = await CertifyEvent(e);
-    certifiedEvents.push(event);
-  });*/
-
-  return certifiedEvents;
-}
-
-// Certify an event while checking if the public key is valid
-// Return the event if the new tag 'verified'
-async function CertifyEvent(event) {
-  console.log('\n - Certification -');
-  console.log('Event :');
-  console.log(event);
-
-  console.log('\n event.id : ' + event.id);
-  // Get the transaction of the event
-  const transaction = await this.getAssets(event.id);
-
-  CertifyPublicKey(transaction);
-  return false;
-}
-
+// Certify the public key
+// Return true if the public key is certified
 async function CertifyPublicKey(publicKey) {
-  console.log('Public key is :');
-  console.log(publicKey);
-  return false;
+  if (publicKey == process.env.public_key) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
-//Return the product's events within the database sorted by id
+// Return the product's events within the database sorted by id
 async function getPrettyDbEvents(productId) {
   // Get the events from the database
   let DB_Events = await prisma.event.findMany({
