@@ -14,6 +14,16 @@ export class BlockchainsController {
     return this.blockchainsService.getTransactions(id);
   }
 
+  @Get('/verify/events/:product_id')
+  verifyEvents(@Param('product_id') productId: string) {
+    return this.blockchainsService.verifyEvents(productId);
+  }
+
+  @Get('/verify/public_key/:id')
+  verifyPublicKey(@Param('id') id: string) {
+    return this.blockchainsService.verifyPublicKey(id);
+  }
+
   @Get('/test/:id')
   test(@Param('id') id: string) {
     return this.blockchainsService.test(id);
