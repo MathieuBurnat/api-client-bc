@@ -77,7 +77,12 @@ export class BigchaindbAdapter {
             ...BC_Events[i],
             certified: true,
           };
-          console.log('✅ Event ' + event.id + ' is certified');
+          console.log(
+            '✅ Event ' +
+              event.id +
+              ' is certified by ' +
+              transaction.outputs[0].public_keys[0],
+          );
         } else {
           event = {
             ...BC_Events[i],
