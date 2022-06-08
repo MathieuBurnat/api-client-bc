@@ -80,6 +80,12 @@ export class BigchaindbAdapter {
     console.log('\n\nBC Events');
     console.log(BC_Events);
 
+    if (JSON.stringify(DB_Events) === JSON.stringify(BC_Events)) {
+      console.log('✅ objects are equal');
+    } else {
+      console.log('⛔️ objects are NOT equal');
+    }
+
     // -- [ Second check ] --
     // Verify the authenticity of the events from the blockchain
     // Well the event's public key need to be known
