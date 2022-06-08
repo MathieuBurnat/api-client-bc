@@ -9,9 +9,9 @@ export class BlockchainsController {
     return this.blockchainsService.generateKeys();
   }
 
-  @Get('transactions/:id')
+  @Get('assets/:id')
   findAll(@Param('id') id: string) {
-    return this.blockchainsService.getTransactions(id);
+    return this.blockchainsService.getAssets(id);
   }
 
   @Get('/verify/events/:product_id')

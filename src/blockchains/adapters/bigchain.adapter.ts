@@ -33,9 +33,11 @@ export class BigchaindbAdapter {
   }
 
   async getTransactions(productId) {
+  // Get asset of a product id or an event id
+  async getAssets(id) {
     const conn = new Connection(process.env.API_PATH);
 
-    return await conn.searchAssets(productId).then((assets) => assets);
+    return await conn.searchAssets(id).then((assets) => assets);
   }
 
   // Verify eventy

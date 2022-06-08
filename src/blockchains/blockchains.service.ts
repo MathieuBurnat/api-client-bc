@@ -9,8 +9,8 @@ export class BlockchainsService {
     return await this.bigchaindbAdapter.createTransaction(event, product);
   }
 
-  async getTransactions(productId) {
-    return await this.bigchaindbAdapter.getTransactions(productId);
+  async getAssets(productId) {
+    return await this.bigchaindbAdapter.getAssets(productId);
   }
 
   async generateKeys() {
