@@ -49,13 +49,8 @@ export class BigchaindbAdapter {
     // *** Events on blockchain ***
 
     //Get the events from the blockchain
-    let BC_Events = await this.getAssets(productId);
+    const BC_Events = await getPrettyBcEvents(await this.getAssets(productId));
 
-    // Pluck events
-    BC_Events = BC_Events.map((a) => a.data.event);
-
-    // Sort BC events by id
-    BC_Events = BC_Events.sort((a, b) => a.id.localeCompare(b.id));
 
     // ** Render the result **
     console.log('\n\nDB Events');
@@ -158,3 +153,12 @@ async function getPrettyDbEvents(productId) {
 }
 
 //Return the product's events on the blockchain sorted by id
+async function getPrettyBcEvents(BC_Events) {
+  // Pluck events
+  BC_Events = BC_Events.map((a) => a.data.event);
+
+  // Sort BC events by id
+  BC_Events = BC_Events.sort((a, b) => a.id.localeCompare(b.id));
+
+  return BC_Events;
+}
