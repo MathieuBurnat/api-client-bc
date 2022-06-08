@@ -32,7 +32,6 @@ export class BigchaindbAdapter {
       .then((retrievedTx) => retrievedTx);
   }
 
-  async getTransactions(productId) {
   // Get asset of a product id or an event id
   async getAssets(id) {
     const conn = new Connection(process.env.API_PATH);
@@ -67,7 +66,7 @@ export class BigchaindbAdapter {
     // *** Events on blockchain ***
 
     //Get the events from the blockchain
-    let BC_Events = await this.getTransactions(productId);
+    let BC_Events = await this.getAssets(productId);
 
     // Pluck events
     BC_Events = BC_Events.map((a) => a.data.event);
@@ -84,6 +83,8 @@ export class BigchaindbAdapter {
 
     if (JSON.stringify(DB_Events) === JSON.stringify(BC_Events)) {
       console.log('✅ objects are equal');
+
+      BC_Events = CertifyEvents(BC_Events);
     } else {
       console.log('⛔️ objects are NOT equal');
     }
@@ -110,4 +111,30 @@ export class BigchaindbAdapter {
 
     return await conn.getTransaction(id).then((assets) => assets);
   }
+}
+// Certify the events
+// Return the events with the tag 'verified' set true if it is
+function CertifyEvents(events) {
+  const certifiedEvents = [];
+  let event;
+
+  events.forEach((e) => {
+    event = CertifyEvent(e);
+    certifiedEvents.push(event);
+  });
+  return certifiedEvents;
+}
+
+// Certify an event while checking if the public key is valid
+// Return the event if the new tag 'verified'
+async function CertifyEvent(event) {
+  console.log('\n - Certification -');
+  console.log('Event :');
+  console.log(event);
+
+  console.log('\n event.id : ' + event.id);
+  // Get the transaction of the event
+  const transaction = await this.getAssets(event.id);
+
+  return false;
 }
