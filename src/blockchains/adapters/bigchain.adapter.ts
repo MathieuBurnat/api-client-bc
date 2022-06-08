@@ -40,16 +40,18 @@ export class BigchaindbAdapter {
 
   // Verify eventy
   async verifyEvents(productId) {
-    // [First check]
+    // -- [ First check ] --
     // Verify if the events from the database is the same than the events from the blockchain
 
+    // *** Events on database ***
     // Get the events from the database
-    const DB_Events = await prisma.event.findMany({
+    let DB_Events = await prisma.event.findMany({
       where: {
         productId,
       },
     });
 
+    // Throw an error if there are no events in the database
     if (DB_Events.length <= 0) {
       throw new HttpException(
         'We are sorry, this productId is referred to any event within the database',
@@ -57,18 +59,28 @@ export class BigchaindbAdapter {
       );
     }
 
-    //Get the events from the blockchain
-    const BC_Events = await this.getTransactions(productId);
+    // Sort Db events by id
+    DB_Events = DB_Events.sort((a, b) => a.id.localeCompare(b.id));
 
+    // *** Events on blockchain ***
+
+    //Get the events from the blockchain
+    let BC_Events = await this.getTransactions(productId);
+
+    // Pluck events
+    BC_Events = BC_Events.map((a) => a.data.event);
+
+    // Sort BC events by id
+    BC_Events = BC_Events.sort((a, b) => a.id.localeCompare(b.id));
+
+    // ** Render the result **
     console.log('\n\nDB Events');
     console.log(DB_Events);
-    // Pluck the BC_Events.data.event
-    const result = BC_Events.map((a) => a.data.event);
 
     console.log('\n\nBC Events');
-    console.log(result);
+    console.log(BC_Events);
 
-    // [Second check]
+    // -- [ Second check ] --
     // Verify the authenticity of the events from the blockchain
     // Well the event's public key need to be known
 
