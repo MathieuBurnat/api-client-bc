@@ -2,6 +2,7 @@ import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
 import prisma from '../../../lib/prisma';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { pluck } from 'rxjs';
+import e from 'express';
 export class BigchaindbAdapter {
   async createTransaction(event, product) {
     const tx = Transaction.makeCreateTransaction(
@@ -57,15 +58,13 @@ export class BigchaindbAdapter {
     console.log(BC_Events);
 
     const certifiedEvents = [];
+    let event;
     if (JSON.stringify(DB_Events) === JSON.stringify(BC_Events)) {
       console.log('✅ objects are equal');
 
-      let event;
       for (let i = 0; i < BC_Events.length; i++) {
         const asset = await this.getAssets(BC_Events[i].id);
-        console.log('\n\nAsset: ', asset);
         const transaction = await this.getTransactions(asset[0].id);
-        console.log('\n\ntransaction: ', transaction);
 
         // -- [ Second check ] --
         // Verify the authenticity of the events from the blockchain
@@ -78,15 +77,24 @@ export class BigchaindbAdapter {
             ...BC_Events[i],
             certified: true,
           };
+          console.log('✅ Event ' + event.id + ' is certified');
         } else {
           event = {
             ...BC_Events[i],
             certified: false,
           };
+          console.log('⛔️ Event ' + event.id + ' is not certified');
         }
         certifiedEvents.push(event);
       }
     } else {
+      DB_Events.forEach((e) => {
+        event = {
+          ...e,
+          certified: false,
+        };
+        certifiedEvents.push(event);
+      });
       console.log('⛔️ objects are NOT equal');
     }
 
