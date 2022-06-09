@@ -29,17 +29,20 @@ model Product {
   price             Decimal
   qrcode            String?  @unique @map(name: "qrcode")
   published         Boolean  @default(true)
-  madeBy            String?
   warrantyExpiresOn DateTime
   createdAt         DateTime @default(now()) @map(name: "created_at")
   updatedAt         DateTime @updatedAt @map(name: "updated_at")
   status            Status   @default(READY_TO_USE)
 
-  //relation
+  //owner relation
   owner   Client? @relation(fields: [ownerId], references: [id])
   ownerId String?
 
-  //relation
+  //certification relation
+  creator     CertifiedEntity? @relation(fields: [certifiedBy], references: [id])
+  certifiedBy String?
+
+  //event relation
   events Event[]
 }
 
@@ -62,6 +65,10 @@ model Event {
   //relation one to one eventCommercial
   eventCommercial   EventCommercial? @relation(fields: [eventCommercialId], references: [id])
   eventCommercialId String?
+
+
+  CertifiedEntity   CertifiedEntity? @relation(fields: [certifiedEntityId], references: [id])
+  certifiedEntityId String?
 }
 
 model EventCommercial {
@@ -76,4 +83,22 @@ model EventType {
   content String  @unique @map(name: "content")
   slug    String  @unique @map(name: "slug")
   events  Event[]
+}
+
+model CertifiedEntity {
+  id        String     @id @default(cuid())
+  name      String
+  publicKey String     @unique @map(name: "publicKey")
+  type      EntityType
+
+  // Products relation
+  products Product[]
+
+  // Events relation
+  events Event[]
+}
+
+enum EntityType {
+  PROVIDER
+  SELLER
 }
