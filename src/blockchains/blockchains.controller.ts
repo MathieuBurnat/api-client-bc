@@ -14,14 +14,14 @@ export class BlockchainsController {
     return this.blockchainsService.getAssets(id);
   }
 
-  @Get('/verify/events/:product_id')
-  verifyEvents(@Param('product_id') productId: string) {
-    return this.blockchainsService.verifyEvents(productId);
+  @Get('/certify/events/:product_id')
+  certifyEvents(@Param('product_id') productId: string) {
+    return this.blockchainsService.certifyEvents(productId);
   }
 
-  @Get('/verify/public_key/:id')
-  verifyPublicKey(@Param('id') id: string) {
-    return this.blockchainsService.verifyPublicKey(id);
+  @Get('/certify/entity/:id')
+  certifyPublicKey(@Param('id') id: string) {
+    return this.blockchainsService.certifyPublicKey(id);
   }
 
   @Get('/transactions/:id')

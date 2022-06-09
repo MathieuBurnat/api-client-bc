@@ -23,12 +23,12 @@ export class BlockchainsService {
 
   // Verfify the authenticity of events from a product id
   // Return the events with the tag 'verified'
-  async verifyEvents(productId) {
-    return await this.bigchaindbAdapter.verifyEvents(productId);
+  async certifyEvents(productId) {
+    return await this.bigchaindbAdapter.certifyEvents(productId);
   }
 
   // Verfify the authenticity of a public key
-  async verifyPublicKey(id) {
-    return await this.bigchaindbAdapter.verifyPublicKey(id);
+  async certifyPublicKey(id) {
+    return await this.bigchaindbAdapter.certifyPublicKey(id);
   }
 }
