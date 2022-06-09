@@ -39,7 +39,7 @@ model Product {
   ownerId String?
 
   //certification relation
-  creator     CertifiedEntity? @relation(fields: [certifiedBy], references: [id])
+  CertifiedEntity   CertifiedEntity? @relation(fields: [certifiedBy], references: [publicKey])
   certifiedBy String?
 
   //event relation
@@ -66,8 +66,8 @@ model Event {
   eventCommercial   EventCommercial? @relation(fields: [eventCommercialId], references: [id])
   eventCommercialId String?
 
-  CertifiedEntity   CertifiedEntity? @relation(fields: [certifiedEntityId], references: [id])
-  certifiedEntityId String?
+  CertifiedEntity   CertifiedEntity? @relation(fields: [certifiedEntityPublicKey], references: [publicKey])
+  certifiedEntityPublicKey String?
 }
 
 model EventCommercial {
@@ -85,9 +85,8 @@ model EventType {
 }
 
 model CertifiedEntity {
-  id        String     @id @default(cuid())
+  publicKey String     @id @unique @map(name: "publicKey")
   name      String
-  publicKey String     @unique @map(name: "publicKey")
   type      EntityType
 
   // Products relation
