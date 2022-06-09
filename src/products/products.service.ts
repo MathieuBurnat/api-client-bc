@@ -135,7 +135,11 @@ export class ProductsService {
       },
     });
 
-    this.eventEmitter.emit('product.qrcode.generate', product);
+    this.eventEmitter.emit(
+      'product.qrcode.generate',
+      product,
+      updateProductQrcodeDto.keypair,
+    );
     return product;
   }
 
