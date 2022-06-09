@@ -120,7 +120,9 @@ export class BigchaindbAdapter {
   // Certify the public key
   // Return true if the public key is certified
   async certifyPublicKey(publicKey) {
-    if (publicKey == process.env.public_key) {
+    const certifiEntity = await prisma.certifiedEntity.findMany();
+    // If certifyEntity countain the public key, return true
+    if (certifiEntity.find((e) => e.publicKey === publicKey)) {
       return true;
     } else {
       return false;
