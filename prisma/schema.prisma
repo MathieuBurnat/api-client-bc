@@ -66,8 +66,8 @@ model Event {
   eventCommercial   EventCommercial? @relation(fields: [eventCommercialId], references: [id])
   eventCommercialId String?
 
-  CertifiedEntity   CertifiedEntity? @relation(fields: [certifiedEntityPublicKey], references: [publicKey])
-  certifiedEntityPublicKey String?
+  CertifiedEntity   CertifiedEntity? @relation(fields: [certifiedBy], references: [publicKey])
+  certifiedBy String?
 }
 
 model EventCommercial {
