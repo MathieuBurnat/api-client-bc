@@ -6,4 +6,7 @@ export class UpdateProductQrcodeDto {
   @IsNotEmpty()
   @Validate(IsQrcodeNotExist)
   id: string;
+
+  @IsNotEmpty()
+  keypair: any;
 }

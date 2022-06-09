@@ -172,7 +172,11 @@ export class ProductsService {
         },
       });
 
-      this.eventEmitter.emit('product.status.update', product);
+      this.eventEmitter.emit(
+        'product.status.update',
+        product,
+        updateProductStatus.keypair,
+      );
       return product;
     } else {
       //otherwise, return an error explaining that the status is invalid
