@@ -32,8 +32,21 @@ export class ProductListener {
       content: 'A product has been retrieved by ' + product.ownerId,
       type: 'PRODUCT_RETRIEVED',
     };
-    const e = await this.saveEventOnDataBase(event, product, keypair);
-    this.saveEventOnBlockchain(e, product, keypair);
+
+    // If the keypair is empty, it's normal because we don't currently use keypair for users
+    // Well the keypair will be generated with the system keypair (within the .env file)
+    let systKeypair;
+    if (!keypair) {
+      systKeypair = {
+        publicKey: process.env.public_key,
+        privateKey: process.env.private_key,
+      };
+    } else {
+      systKeypair = keypair;
+    }
+
+    const e = await this.saveEventOnDataBase(event, product, systKeypair);
+    this.saveEventOnBlockchain(e, product, systKeypair);
   }
 
   //Handle and process on extendWarranty
@@ -77,10 +90,12 @@ export class ProductListener {
 
   //save the event on the database
   async saveEventOnDataBase(event, product, keypair) {
+    console.log('\n\n[ Saving.. ]');
+    console.log(keypair);
+
     const eventType = await this.eventsService.getEventType(event.type);
 
     let createEventDto = new CreateEventDto();
-
     createEventDto = {
       ...createEventDto,
       content: event.content,

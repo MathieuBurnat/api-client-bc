@@ -9,7 +9,4 @@ export class UpdateClientRetriveProductDto {
 
   @IsNotEmpty()
   ownerId: string;
-
-  @IsNotEmpty()
-  keypair: any;
 }
