@@ -9,4 +9,7 @@ export class CreateEventDto {
 
   @IsNotEmpty()
   eventTypeId: string;
+
+  @IsNotEmpty()
+  certifiedBy: string;
 }

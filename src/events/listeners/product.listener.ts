@@ -20,7 +20,7 @@ export class ProductListener {
       content: 'A product has been created',
       type: 'PRODUCT_CREATED',
     };
-    const e = await this.saveEventOnDataBase(event, product);
+    const e = await this.saveEventOnDataBase(event, product, keypair);
 
     this.saveEventOnBlockchain(e, product, keypair);
   }
@@ -32,7 +32,7 @@ export class ProductListener {
       content: 'A product has been retrieved by ' + product.ownerId,
       type: 'PRODUCT_RETRIEVED',
     };
-    const e = await this.saveEventOnDataBase(event, product);
+    const e = await this.saveEventOnDataBase(event, product, keypair);
     this.saveEventOnBlockchain(e, product, keypair);
   }
 
@@ -43,7 +43,7 @@ export class ProductListener {
       content: "A product's warranty has been extended",
       type: 'PRODUCT_WARRANTY_EXTENTED',
     };
-    const e = await this.saveEventOnDataBase(event, product);
+    const e = await this.saveEventOnDataBase(event, product, keypair);
     this.saveEventOnBlockchain(e, product, keypair);
   }
 
@@ -54,7 +54,7 @@ export class ProductListener {
       content: "A product's qrcode has been generated",
       type: 'PRODUCT_QRCODE_GENERATED',
     };
-    const e = await this.saveEventOnDataBase(event, product);
+    const e = await this.saveEventOnDataBase(event, product, keypair);
     this.saveEventOnBlockchain(e, product, keypair);
   }
 
@@ -65,7 +65,7 @@ export class ProductListener {
       content: "A product's status has been changed to " + product.status,
       type: product.status,
     };
-    const e = await this.saveEventOnDataBase(event, product);
+    const e = await this.saveEventOnDataBase(event, product, keypair);
     this.saveEventOnBlockchain(e, product, keypair);
   }
 
@@ -76,7 +76,7 @@ export class ProductListener {
   }
 
   //save the event on the database
-  async saveEventOnDataBase(event, product) {
+  async saveEventOnDataBase(event, product, keypair) {
     const eventType = await this.eventsService.getEventType(event.type);
 
     let createEventDto = new CreateEventDto();
@@ -86,6 +86,7 @@ export class ProductListener {
       content: event.content,
       productId: product.id,
       eventTypeId: eventType.id,
+      certifiedBy: keypair.publicKey,
     };
 
     const eventOnDb = await this.eventsService.createEvent(createEventDto);
