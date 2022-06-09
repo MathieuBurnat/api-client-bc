@@ -107,6 +107,13 @@ export class ProductsService {
 
   async extendWarranty(updateProductWarrantyDto: UpdateProductWarrantyDto) {
     const currentProduct = await this.findOne(updateProductWarrantyDto.id);
+    //If the currentProduct is null, then it doesn't exist
+    if (currentProduct == null) {
+      throw new HttpException(
+        "We are sorry, this product doesn't exist.",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     const product = await prisma.product.update({
       where: {
@@ -121,7 +128,11 @@ export class ProductsService {
       },
     });
 
-    this.eventEmitter.emit('product.warranty.extend', product);
+    this.eventEmitter.emit(
+      'product.warranty.extend',
+      product,
+      updateProductWarrantyDto.keypair,
+    );
     return product;
   }
 
