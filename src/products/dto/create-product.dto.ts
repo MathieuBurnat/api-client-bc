@@ -12,4 +12,7 @@ export class CreateProductDto {
 
   @IsNumber()
   price: Decimal;
+
+  @IsNotEmpty()
+  keypair: any;
 }

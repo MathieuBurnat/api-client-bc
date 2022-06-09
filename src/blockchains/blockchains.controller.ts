@@ -19,7 +19,7 @@ export class BlockchainsController {
     return this.blockchainsService.certifyEvents(productId);
   }
 
-  @Get('/certify/entity/:id')
+  @Get('/certify/public-key/:id')
   certifyPublicKey(@Param('id') id: string) {
     return this.blockchainsService.certifyPublicKey(id);
   }

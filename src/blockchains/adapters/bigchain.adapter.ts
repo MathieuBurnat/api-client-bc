@@ -2,7 +2,9 @@ import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
 import prisma from '../../../lib/prisma';
 import { HttpException, HttpStatus } from '@nestjs/common';
 export class BigchaindbAdapter {
-  async createTransaction(event, product) {
+  async createTransaction(event, product, keypair) {
+    this.verifyKeypair(keypair);
+
     const tx = Transaction.makeCreateTransaction(
       // Store the event, the product, and a timestamp
       { event: event, product: product, created_at: new Date().toString() },
@@ -14,14 +16,14 @@ export class BigchaindbAdapter {
       // A transaction needs an output
       [
         Transaction.makeOutput(
-          Transaction.makeEd25519Condition(process.env.public_key),
+          Transaction.makeEd25519Condition(keypair.publicKey),
         ),
       ],
-      process.env.public_key,
+      keypair.publicKey,
     );
 
     // Sign the transaction with the private key
-    const txSigned = Transaction.signTransaction(tx, process.env.private_key);
+    const txSigned = Transaction.signTransaction(tx, keypair.privateKey);
 
     const conn = new Connection(process.env.API_PATH);
 
@@ -163,5 +165,16 @@ export class BigchaindbAdapter {
     BC_Events = BC_Events.sort((a, b) => a.id.localeCompare(b.id));
 
     return BC_Events;
+  }
+
+  // Verify the keypair
+  verifyKeypair(keypair) {
+    // If the keypair doesn't contain a publicKey and a privateKey, throw an error
+    if (!keypair.publicKey || !keypair.privateKey) {
+      throw new HttpException(
+        'We are sorry, this keypair is not valid. It must contains a publicKey and a privateKey',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

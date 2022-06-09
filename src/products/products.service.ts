@@ -46,13 +46,19 @@ export class ProductsService {
   }
 
   async create(createProductDto: CreateProductDto) {
+    const keypair = createProductDto.keypair;
+
+    //remove keypair from createProductDto
+    delete createProductDto.keypair;
+
     const product = await prisma.product.create({
       data: {
         ...createProductDto,
+        certifiedBy: keypair.publicKey,
       },
     });
 
-    this.eventEmitter.emit('product.created', product);
+    this.eventEmitter.emit('product.created', product, keypair);
     return product;
   }
 
@@ -63,7 +69,7 @@ export class ProductsService {
       },
     });
 
-    let client = await prisma.client.findUnique({
+    const client = await prisma.client.findUnique({
       where: {
         id: updateClientRetriveProductDto.ownerId,
       },

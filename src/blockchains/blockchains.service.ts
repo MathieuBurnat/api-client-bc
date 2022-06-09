@@ -5,8 +5,12 @@ import { BigchaindbAdapter } from './adapters/bigchain.adapter';
 export class BlockchainsService {
   private bigchaindbAdapter = new BigchaindbAdapter();
 
-  async createTransaction(event, product) {
-    return await this.bigchaindbAdapter.createTransaction(event, product);
+  async createTransaction(event, product, keypair) {
+    return await this.bigchaindbAdapter.createTransaction(
+      event,
+      product,
+      keypair,
+    );
   }
 
   async getAssets(productId) {
