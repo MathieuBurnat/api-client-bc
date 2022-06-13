@@ -22,14 +22,22 @@ export class BigchaindbAdapter {
       keypair.publicKey,
     );
 
-    // Sign the transaction with the private key
-    const txSigned = Transaction.signTransaction(tx, keypair.privateKey);
-
+    // Create a connection to the BigchainDB API
     const conn = new Connection(process.env.API_PATH);
 
-    return await conn
-      .postTransactionCommit(txSigned)
-      .then((retrievedTx) => retrievedTx);
+    // Try to sign the transaction and publish it
+    let txSigned;
+    try {
+      // Sign the transaction
+      txSigned = Transaction.signTransaction(tx, keypair.privateKey);
+      // Post the transaction to the BigchainDB API
+      return await conn
+        .postTransactionCommit(txSigned)
+        .then((retrievedTx) => retrievedTx);
+    } catch (error) {
+      console.log(error);
+      console.log('Are you sure that the private key is valid ?');
+    }
   }
 
   // Get asset of a product id or an event id
