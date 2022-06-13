@@ -54,6 +54,10 @@ describe('ProductsController', () => {
       warrantyExpiresOn: new Date(
         new Date().setDate(new Date().getDate() + 360),
       ),
+      keypair: {
+        publicKey: process.env.public_key,
+        privateKey: process.env.private_key,
+      },
     };
     // Create a product via the service
     const result = await productsService.create(createProductDto);
@@ -89,6 +93,10 @@ describe('ProductsController', () => {
       ...updateProductWarrantyDto,
       id: product.id,
       delay: 360,
+      keypair: {
+        publicKey: process.env.public_key,
+        privateKey: process.env.private_key,
+      },
     };
 
     const result = await productsService.extendWarranty(
@@ -107,6 +115,10 @@ describe('ProductsController', () => {
     updateProductQrcodeDto = {
       ...updateProductQrcodeDto,
       id: product.id,
+      keypair: {
+        publicKey: process.env.public_key,
+        privateKey: process.env.private_key,
+      },
     };
 
     const result = await productsService.generateQrcode(updateProductQrcodeDto);
