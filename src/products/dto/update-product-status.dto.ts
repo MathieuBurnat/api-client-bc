@@ -1,8 +1,10 @@
 import { Status } from '@prisma/client';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Validate } from 'class-validator';
+import { IsProductExists } from '../../validations/products-validator';
 
 export class UpdateProductStatusDto {
   @IsNotEmpty()
+  @Validate(IsProductExists)
   id: string;
 
   @IsNotEmpty()
