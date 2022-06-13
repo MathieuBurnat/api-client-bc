@@ -27,7 +27,7 @@
 
 0. Before the installation
 
-We higly recommand you to read the [wiki](https://github.com/MathieuBurnat/api-client-bc/wiki), espacially the [get started](https://github.com/MathieuBurnat/api-client-bc/wiki/Get-Started) section.
+We highly recommand you to read the [wiki](https://github.com/MathieuBurnat/api-client-bc/wiki), especially the [get started](https://github.com/MathieuBurnat/api-client-bc/wiki/Get-Started) section.
 
 1. Configure the environment variables inside the `.env` file.
 
