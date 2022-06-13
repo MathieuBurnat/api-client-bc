@@ -1,5 +1,7 @@
 import { Decimal } from '@prisma/client/runtime';
-import { isDate, IsNotEmpty, IsNumber, IsDate } from 'class-validator';
+import { isDate, IsNotEmpty, IsNumber, IsDate, Validate } from 'class-validator';
+import { IsKeypairValid } from '../../validations/certified-entity-validator';
+
 export class CreateProductDto {
   @IsNotEmpty()
   name: string;
@@ -13,6 +15,7 @@ export class CreateProductDto {
   @IsNumber()
   price: Decimal;
 
+  @Validate(IsKeypairValid)
   @IsNotEmpty()
   keypair: any;
 }

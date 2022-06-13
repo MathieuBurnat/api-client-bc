@@ -1,6 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { IsQrcodeNotExist } from '../../validations/products-validator';
 import { Validate } from 'class-validator';
+import { IsKeypairValid } from '../../validations/certified-entity-validator';
 
 export class UpdateProductQrcodeDto {
   @IsNotEmpty()
@@ -8,5 +9,6 @@ export class UpdateProductQrcodeDto {
   id: string;
 
   @IsNotEmpty()
+  @Validate(IsKeypairValid)
   keypair: any;
 }
