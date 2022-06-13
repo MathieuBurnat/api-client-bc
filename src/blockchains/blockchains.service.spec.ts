@@ -12,7 +12,12 @@ describe('BlockchainsService', () => {
     service = module.get<BlockchainsService>(BlockchainsService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('Generate keys', async () => {
+    // Create a client via the service
+    const result = await service.generateKeys();
+    expect(result).toEqual({
+      publicKey: expect.any(String),
+      privateKey: expect.any(String),
+    });
   });
 });

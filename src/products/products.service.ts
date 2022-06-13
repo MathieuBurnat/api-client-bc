@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
 import prisma from '../../lib/prisma';
@@ -6,13 +6,19 @@ import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-produc
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UpdateProductStatusDto } from './dto/update-product-status.dto';
 import { Status } from '@prisma/client';
+import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProductsService {
   constructor(private eventEmitter: EventEmitter2) {}
 
   findAll() {
-    return prisma.product.findMany();
+    return prisma.product.findMany({
+      include: {
+        owner: true,
+      },
+    });
   }
 
   findOne(id: string) {
@@ -31,19 +37,28 @@ export class ProductsService {
       where: {
         productId: id,
       },
+      include: {
+        eventType: true,
+      },
     });
 
     return events;
   }
 
   async create(createProductDto: CreateProductDto) {
+    const keypair = createProductDto.keypair;
+
+    //remove keypair from createProductDto
+    delete createProductDto.keypair;
+
     const product = await prisma.product.create({
       data: {
         ...createProductDto,
+        certifiedBy: keypair.publicKey,
       },
     });
 
-    this.eventEmitter.emit('product.created', product);
+    this.eventEmitter.emit('product.created', product, keypair);
     return product;
   }
 
@@ -54,13 +69,26 @@ export class ProductsService {
       },
     });
 
+    const client = await prisma.client.findUnique({
+      where: {
+        id: updateClientRetriveProductDto.ownerId,
+      },
+    });
+
     //If the product's owner already exist, then it's not possible to retrieve the product
-    if (product.ownerId != null) {
-      return {
-        statusCode: '403',
-        message: ['We are sorry, this product has already an owner.'],
-        error: 'Forbidden',
-      };
+    if (product.ownerId !== null) {
+      throw new HttpException(
+        'We are sorry, this product is already owned by someone.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    //If the owner is null, then it doesn't exist
+    if (client == null) {
+      throw new HttpException(
+        "We are sorry, this client doesn't exist.",
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     // Otherwise, update the product with the new owner
@@ -79,6 +107,14 @@ export class ProductsService {
 
   async extendWarranty(updateProductWarrantyDto: UpdateProductWarrantyDto) {
     const currentProduct = await this.findOne(updateProductWarrantyDto.id);
+    //If the currentProduct is null, then it doesn't exist
+    if (currentProduct == null) {
+      throw new HttpException(
+        "We are sorry, this product doesn't exist.",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const product = await prisma.product.update({
       where: {
         id: currentProduct.id,
@@ -92,8 +128,36 @@ export class ProductsService {
       },
     });
 
-    this.eventEmitter.emit('product.warranty.extend', product);
+    this.eventEmitter.emit(
+      'product.warranty.extend',
+      product,
+      updateProductWarrantyDto.keypair,
+    );
     return product;
+  }
+
+  async generateQrcode(updateProductQrcodeDto: UpdateProductQrcodeDto) {
+    const product = await prisma.product.update({
+      where: {
+        id: updateProductQrcodeDto.id,
+      },
+      data: {
+        qrcode: uuidv4(),
+      },
+    });
+
+    this.eventEmitter.emit(
+      'product.qrcode.generate',
+      product,
+      updateProductQrcodeDto.keypair,
+    );
+    return product;
+  }
+
+  // Return the status that a product could have
+  // Status is an enum
+  async getStatus() {
+    return Status;
   }
 
   async updateStatus(updateProductStatus: UpdateProductStatusDto) {
@@ -101,13 +165,10 @@ export class ProductsService {
 
     // Check if the currentProduct has the same status than the UpdateProductStatusDto
     if (currentProduct.status === updateProductStatus.status) {
-      return {
-        statusCode: '400',
-        message: [
-          "The product's status is already " + updateProductStatus.status,
-        ],
-        error: 'Bad Request',
-      };
+      throw new HttpException(
+        "The product's status is already " + updateProductStatus.status,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     // Check if the product's status is valid
@@ -122,7 +183,11 @@ export class ProductsService {
         },
       });
 
-      this.eventEmitter.emit('product.status.update', product);
+      this.eventEmitter.emit(
+        'product.status.update',
+        product,
+        updateProductStatus.keypair,
+      );
       return product;
     } else {
       //otherwise, return an error explaining that the status is invalid

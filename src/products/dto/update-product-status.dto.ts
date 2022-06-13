@@ -7,4 +7,7 @@ export class UpdateProductStatusDto {
 
   @IsNotEmpty()
   status: Status;
+
+  @IsNotEmpty()
+  keypair: any;
 }

@@ -6,9 +6,11 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { CreateCommercialEventDto } from './dto/create-commercial-event.dto';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { Decimal } from '@prisma/client/runtime';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('EventsController', () => {
   let controller: EventsController;
+  const eventsService = new EventsService(new EventEmitter2());
 
   const eventGoal = {
     id: expect.any(String),
@@ -41,11 +43,7 @@ describe('EventsController', () => {
     };
 
     // Create the event
-    const result = await prisma.event.create({
-      data: {
-        ...createEventDto,
-      },
-    });
+    const result = await eventsService.createEvent(createEventDto);
 
     expect(result.id).toEqual(eventGoal.id);
     expect(result.productId).toEqual(eventGoal.productId);
@@ -69,22 +67,9 @@ describe('EventsController', () => {
     };
 
     // Create the commercial event
-    const commercialEvent = await prisma.eventCommercial.create({
-      data: {
-        action: createCommercialEventDto.action,
-        shall_expire_on: createCommercialEventDto.shall_expire_on,
-      },
-    });
-
-    // Create the event and attach the commercial event id
-    const result = await prisma.event.create({
-      data: {
-        content: createCommercialEventDto.content,
-        productId: createCommercialEventDto.productId,
-        eventTypeId: eventType.id,
-        eventCommercialId: commercialEvent.id,
-      },
-    });
+    const result = await eventsService.createCommercial(
+      createCommercialEventDto,
+    );
 
     expect(result.id).toEqual(eventGoal.id);
     expect(result.productId).toEqual(eventGoal.productId);
@@ -94,7 +79,7 @@ describe('EventsController', () => {
   });
 
   it('Get event - Find Many', async () => {
-    const result = await prisma.event.findMany();
+    const result = await eventsService.findAll();
 
     expect(result[0].id).toEqual(eventGoal.id);
     expect(result[0].content).toEqual(eventGoal.content);
@@ -102,7 +87,8 @@ describe('EventsController', () => {
   });
 
   it('Get event - Find one', async () => {
-    const result = await prisma.event.findFirst();
+    const event = await prisma.event.findFirst();
+    const result = await eventsService.findOne(event.id);
 
     expect(result.id).toEqual(eventGoal.id);
     expect(result.content).toEqual(eventGoal.content);

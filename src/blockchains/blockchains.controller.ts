@@ -1,7 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { BlockchainsService } from './blockchains.service';
-import { CreateBlockchainDto } from './dto/create-blockchain.dto';
-import { UpdateBlockchainDto } from './dto/update-blockchain.dto';
 
 @Controller('blockchains')
 export class BlockchainsController {
@@ -11,8 +9,23 @@ export class BlockchainsController {
     return this.blockchainsService.generateKeys();
   }
 
-  @Get('transactions/:id')
-  findAll(@Param('id') id: string) {
+  @Get('/assets/:id')
+  getAssets(@Param('id') id: string) {
+    return this.blockchainsService.getAssets(id);
+  }
+
+  @Get('/certify/events/:product_id')
+  certifyEvents(@Param('product_id') productId: string) {
+    return this.blockchainsService.certifyEvents(productId);
+  }
+
+  @Get('/certify/public-key/:id')
+  certifyPublicKey(@Param('id') id: string) {
+    return this.blockchainsService.certifyPublicKey(id);
+  }
+
+  @Get('/transactions/:id')
+  getTransactions(@Param('id') id: string) {
     return this.blockchainsService.getTransactions(id);
   }
 }

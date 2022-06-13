@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EventsService } from '../events.service';
 import { BlockchainsService } from '../../blockchains/blockchains.service';
+import { CreateEventDto } from '../dto/create-event.dto';
 
 @Injectable()
 export class ProductListener {
@@ -12,71 +13,114 @@ export class ProductListener {
 
   //Handle and process on created
   @OnEvent('product.created')
-  handleCreatedEvent(product) {
+  async handleCreatedEvent(product, keypair) {
+    console.log('\n\n[ Product created ]');
+
     const event = {
       content: 'A product has been created',
       type: 'PRODUCT_CREATED',
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+    const e = await this.saveEventOnDataBase(event, product, keypair);
+
+    this.saveEventOnBlockchain(e, product, keypair);
   }
 
   //Handle and process on retrieve
   @OnEvent('product.retrieve')
-  handleRetrieveEvent(product) {
+  async handleRetrieveEvent(product, keypair) {
     const event = {
       content: 'A product has been retrieved by ' + product.ownerId,
       type: 'PRODUCT_RETRIEVED',
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+
+    // If the keypair is empty, it's normal because we don't currently use keypair for users
+    // Well the keypair will be generated with the system keypair (within the .env file)
+    let systKeypair;
+    if (!keypair) {
+      systKeypair = {
+        publicKey: process.env.public_key,
+        privateKey: process.env.private_key,
+      };
+    } else {
+      systKeypair = keypair;
+    }
+
+    const e = await this.saveEventOnDataBase(event, product, systKeypair);
+    this.saveEventOnBlockchain(e, product, systKeypair);
   }
 
   //Handle and process on extendWarranty
   @OnEvent('product.warranty.extend')
-  handleExtendWarrantyEvent(product) {
+  async handleExtendWarrantyEvent(product, keypair) {
     const event = {
       content: "A product's warranty has been extended",
-      type: 'PRODUCT_WARRANTY_EXTENDTED',
+      type: 'PRODUCT_WARRANTY_EXTENTED',
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+    const e = await this.saveEventOnDataBase(event, product, keypair);
+    this.saveEventOnBlockchain(e, product, keypair);
+  }
+
+  // Handle and process when the qrcode is generated
+  @OnEvent('product.qrcode.generate')
+  async handleQrcodeGenerateEvent(product, keypair) {
+    const event = {
+      content: "A product's qrcode has been generated",
+      type: 'PRODUCT_QRCODE_GENERATED',
+    };
+    const e = await this.saveEventOnDataBase(event, product, keypair);
+    this.saveEventOnBlockchain(e, product, keypair);
   }
 
   //handle and process on product's status change
   @OnEvent('product.status.update')
-  handleStatusChangeEvent(product) {
+  async handleStatusChangeEvent(product, keypair) {
     const event = {
       content: "A product's status has been changed to " + product.status,
       type: product.status,
     };
-    this.saveEventOnDataBase(event, product);
-    this.saveEventOnBlockchain(event, product);
+    const e = await this.saveEventOnDataBase(event, product, keypair);
+    this.saveEventOnBlockchain(e, product, keypair);
   }
 
+  // Handle and process on commercial events
   @OnEvent('commercial.event')
-  handleCommercialEvent(event, product) {
-    this.saveEventOnBlockchain(event, product);
+  handleCommercialEvent(event, product, keypair) {
+    this.saveEventOnBlockchain(event, product, keypair);
   }
 
   //save the event on the database
-  async saveEventOnDataBase(event, product) {
-    const eventOnDb = await this.eventsService.create(event, product);
+  async saveEventOnDataBase(event, product, keypair) {
+    console.log('\n\n[ Saving.. ]');
+    console.log(keypair);
+
+    const eventType = await this.eventsService.getEventType(event.type);
+
+    let createEventDto = new CreateEventDto();
+    createEventDto = {
+      ...createEventDto,
+      content: event.content,
+      productId: product.id,
+      eventTypeId: eventType.id,
+      certifiedBy: keypair.publicKey,
+    };
+
+    const eventOnDb = await this.eventsService.createEvent(createEventDto);
 
     console.log('\n\n[ Data stored on database ]');
     console.log(eventOnDb);
+    return eventOnDb;
   }
 
   //save the event on the blockchain
-  async saveEventOnBlockchain(event, product) {
+  async saveEventOnBlockchain(event, product, keypair) {
+    console.log('\n\n[ Saving.. ]');
     const eventOnBCPost = await this.blockchainsService.createTransaction(
       event,
       product,
+      keypair,
     );
 
-    const eventOnBcGet = await this.blockchainsService.getTransactions(
-      product.id,
-    );
+    const eventOnBcGet = await this.blockchainsService.getAssets(product.id);
 
     console.log('\n\n[ Data stored on the blockchain ]');
     console.log(eventOnBCPost);

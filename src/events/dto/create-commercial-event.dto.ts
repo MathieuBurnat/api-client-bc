@@ -1,5 +1,5 @@
 import { Decimal } from '@prisma/client/runtime';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateCommercialEventDto {
   @IsNotEmpty()
@@ -12,6 +12,7 @@ export class CreateCommercialEventDto {
   eventTypeContent: string;
 
   @IsNotEmpty()
+  @IsNumber()
   action: Decimal;
 
   @IsNotEmpty()

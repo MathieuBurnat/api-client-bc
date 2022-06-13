@@ -1,6 +1,7 @@
 // schema.prisma
 datasource db {
   provider = "postgresql"
+  // Don't forget to set this value in .env file
   url      = env("DATABASE_URL")
 }
 
@@ -26,19 +27,22 @@ model Product {
   id                String   @id @default(cuid())
   name              String
   price             Decimal
-  qrcode            String?  @unique @default(dbgenerated("gen_random_uuid()")) @map(name: "qrcode")
+  qrcode            String?  @unique @map(name: "qrcode")
   published         Boolean  @default(true)
-  madeBy            String?
   warrantyExpiresOn DateTime
   createdAt         DateTime @default(now()) @map(name: "created_at")
   updatedAt         DateTime @updatedAt @map(name: "updated_at")
   status            Status   @default(READY_TO_USE)
 
-  //relation
+  //owner relation
   owner   Client? @relation(fields: [ownerId], references: [id])
   ownerId String?
 
-  //relation
+  //certification relation
+  CertifiedEntity   CertifiedEntity? @relation(fields: [certifiedBy], references: [publicKey])
+  certifiedBy String?
+
+  //event relation
   events Event[]
 }
 
@@ -61,6 +65,9 @@ model Event {
   //relation one to one eventCommercial
   eventCommercial   EventCommercial? @relation(fields: [eventCommercialId], references: [id])
   eventCommercialId String?
+
+  CertifiedEntity   CertifiedEntity? @relation(fields: [certifiedBy], references: [publicKey])
+  certifiedBy String?
 }
 
 model EventCommercial {
@@ -73,5 +80,23 @@ model EventCommercial {
 model EventType {
   id      String  @id @default(cuid())
   content String  @unique @map(name: "content")
+  slug    String  @unique @map(name: "slug")
   events  Event[]
+}
+
+model CertifiedEntity {
+  publicKey String     @id @unique @map(name: "publicKey")
+  name      String
+  type      EntityType
+
+  // Products relation
+  products Product[]
+
+  // Events relation
+  events Event[]
+}
+
+enum EntityType {
+  PROVIDER
+  SELLER
 }

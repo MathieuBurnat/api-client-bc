@@ -24,13 +24,16 @@
 
 ## Description
 
-Don't forget to see the [wiki](https://github.com/MathieuBurnat/api-client-bc/wiki) page !
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
 
-1. **Copy-Past** the file `.env_example` to `.env`
-2. Configure the environment variables inside the `.env` file.
+1. Configure the environment variables inside the `.env` file.
 
+```
+// The url of the database
+DATABASE_URL="postgres://user:password@localhost:5432/database"
+```
 
 2. Install dependencies.
   
@@ -38,23 +41,27 @@ Don't forget to see the [wiki](https://github.com/MathieuBurnat/api-client-bc/wi
 npm install
 ```
 
-3. Generate prisma
-```bash
-# generate schema
-npx prisma generate
-```
+3. Don't forget to seed the database. (See the Database & Prisma section)
 
-4. Enjoy
+4. Run the application.
 ```bash
 npm run start
 ```
 
-5. (Optional) Test
-
-It also possible to run tests via the following command : 
+## Database & Prisma
 
 ```bash
-npm run test
+# seed database
+npx prisma db seed
+
+# push schema
+npx prisma db push
+
+# lunch prisma studio
+npx prisma db push
+
+# generate schema
+npx prisma generate
 ```
 
 ## Running the app
@@ -81,19 +88,6 @@ npm run test:e2e
 
 # test coverage
 npm run test:cov
-```
-
-## Database & Prisma
-
-```bash
-# push schema
-npx prisma db push
-
-# lunch prisma studio
-npx prisma db push
-
-# generate schema
-npx prisma generate
 ```
 
 ## Support
