@@ -82,7 +82,12 @@ export class EventsService {
       eventCommercial: commercialEvent,
     };
 
-    this.eventEmitter.emit('commercial.event', eventWithCommercial, product);
+    this.eventEmitter.emit(
+      'commercial.event',
+      eventWithCommercial,
+      product,
+      createCommercialEventDto.keypair,
+    );
 
     // Return the event
     return event;

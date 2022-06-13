@@ -19,4 +19,7 @@ export class CreateCommercialEventDto {
 
   @IsNotEmpty()
   shall_expire_on: Date;
+
+  @IsNotEmpty()
+  keypair: any;
 }
