@@ -22,11 +22,12 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
+
+0. Before the installation
+
+We higly recommand you to read the [wiki](https://github.com/MathieuBurnat/api-client-bc/wiki), espacially the [get started](https://github.com/MathieuBurnat/api-client-bc/wiki/Get-Started) section.
 
 1. Configure the environment variables inside the `.env` file.
 
