@@ -1,7 +1,9 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, Validate } from 'class-validator';
+import { IsProductExists } from '../../validations/products-validator';
 
 export class UpdateProductWarrantyDto {
   @IsNotEmpty()
+  @Validate(IsProductExists)
   id: string;
 
   @IsNumber()
