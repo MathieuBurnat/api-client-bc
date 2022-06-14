@@ -27,7 +27,7 @@ describe('ProductsController', () => {
     updatedAt: expect.any(Date),
   };
   const productsService = new ProductsService(new EventEmitter2());
-
+  let product;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [EventEmitterModule.forRoot()],
@@ -60,12 +60,12 @@ describe('ProductsController', () => {
       },
     };
     // Create a product via the service
-    const result = await productsService.create(createProductDto);
+    product = await productsService.create(createProductDto);
 
     // Excpect the result to be a product
-    expect(result.id).toEqual(productGoal.id);
-    expect(result.price).toEqual(productGoal.price);
-    expect(result.published).toEqual(productGoal.published);
+    expect(product.id).toEqual(productGoal.id);
+    expect(product.price).toEqual(productGoal.price);
+    expect(product.published).toEqual(productGoal.published);
   });
 
   it('Get product - Find Many', async () => {
@@ -108,8 +108,6 @@ describe('ProductsController', () => {
   });
 
   it('Generate qrcode', async () => {
-    const product = await prisma.product.findFirst();
-
     let updateProductQrcodeDto = new UpdateProductQrcodeDto();
 
     updateProductQrcodeDto = {
@@ -121,14 +119,13 @@ describe('ProductsController', () => {
       },
     };
 
-    const result = await productsService.generateQrcode(updateProductQrcodeDto);
+    product = await productsService.generateQrcode(updateProductQrcodeDto);
 
-    expect(result.id).toEqual(productGoal.id);
+    expect(product.id).toEqual(productGoal.id);
   });
 
   it('Retrive product', async () => {
     const client = await prisma.client.findFirst();
-    const product = await prisma.product.findFirst();
 
     let updateClientRetriveProductDto = new UpdateClientRetriveProductDto();
 
