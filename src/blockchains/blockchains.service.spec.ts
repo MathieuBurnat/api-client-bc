@@ -34,7 +34,6 @@ describe('BlockchainsService', () => {
     const result = await service.certifyEvents(event.productId);
 
     expect(result[0].id).toEqual(expect.any(String));
-    expect(result[0].certifiedBy).toEqual(expect.any(String));
     expect(true).toEqual(isBoolean(result[0].certified));
   });
 });
