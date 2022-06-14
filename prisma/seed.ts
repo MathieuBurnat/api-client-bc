@@ -8,6 +8,11 @@ const load = async () => {
       throw new Error('EventType are already seeded');
     }
 
+    const productType = await prisma.productType.findMany();
+    if (productType.length > 0) {
+      throw new Error('productType are already seeded');
+    }
+
     // create eventType
     await prisma.eventType.createMany({
       data: [
@@ -30,6 +35,16 @@ const load = async () => {
     });
 
     console.log('✨ 8 eventyTypes successfully created!');
+
+    // create productType
+    await prisma.productType.createMany({
+      data: [
+        { slug: 'Cloack', content: 'Cloack' },
+        { slug: 'Pencil', content: 'Pencil' },
+      ],
+    });
+
+    console.log('✨ 2 productType successfully created!');
   } catch (e) {
     console.error(e);
     process.exit(1);

@@ -46,8 +46,8 @@ model Product {
   events Event[]
 
   //productType relation
-  productType ProductType @relation(fields: [productTypeId], references: [id])
-  productTypeId String
+  productType ProductType? @relation(fields: [productTypeId], references: [id])
+  productTypeId String?
 }
 
 model ProductType {
