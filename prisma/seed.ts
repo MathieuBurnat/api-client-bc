@@ -39,8 +39,8 @@ const load = async () => {
     // create productType
     await prisma.productType.createMany({
       data: [
-        { slug: 'Cloack', content: 'Cloack' },
-        { slug: 'Pencil', content: 'Pencil' },
+        { slug: 'Watch ⌚', content: 'watch' },
+        { slug: 'Pencil ✏️', content: 'pencil' },
       ],
     });
 
