@@ -27,6 +27,9 @@ export class ProductsService {
       where: {
         id: id,
       },
+      include: {
+        CertifiedEntity: true,
+      },
     });
   }
 
