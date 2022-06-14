@@ -9,7 +9,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventsService } from '../events/events.service';
 import { BlockchainsService } from '../blockchains/blockchains.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
+import { UpdateProductWarrantyDto } from './dto/update-product-warranty-dto';
 import { UpdateClientRetriveProductDto } from './dto/update-client-retrive-product.dto';
 import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto';
 

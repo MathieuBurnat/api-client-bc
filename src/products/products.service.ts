@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
+import { UpdateProductWarrantyDto } from './dto/update-product-warranty-dto';
 import prisma from '../../lib/prisma';
 import { UpdateClientRetriveProductDto } from './dto/update-client-retrive-product.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
