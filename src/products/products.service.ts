@@ -5,7 +5,7 @@ import prisma from '../../lib/prisma';
 import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-product.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UpdateProductStatusDto } from './dto/update-product-status.dto';
-import { Status } from '@prisma/client';
+import { ProductStatus as Status } from '@prisma/client';
 import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto';
 import { v4 as uuidv4 } from 'uuid';
 
