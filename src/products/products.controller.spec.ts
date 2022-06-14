@@ -22,6 +22,7 @@ describe('ProductsController', () => {
     warrantyExpiresOn: expect.any(Date),
     createdAt: expect.any(Date),
     updatedAt: expect.any(Date),
+    productTypeId: null,
   };
   let product;
 

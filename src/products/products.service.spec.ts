@@ -25,6 +25,7 @@ describe('ProductsController', () => {
     warrantyExpiresOn: expect.any(Date),
     createdAt: expect.any(Date),
     updatedAt: expect.any(Date),
+    productTypeId: null,
   };
   const productsService = new ProductsService(new EventEmitter2());
   let product;

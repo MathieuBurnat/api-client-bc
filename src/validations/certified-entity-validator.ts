@@ -16,7 +16,6 @@ export class IsKeypairValid implements ValidatorConstraintInterface {
         publicKey: keypair.publicKey,
       },
     });
-
     // If the entity doesnt exist, return false
     if (!ce) {
       return false;
