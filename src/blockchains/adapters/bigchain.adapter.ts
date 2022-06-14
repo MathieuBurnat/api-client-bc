@@ -1,6 +1,8 @@
-import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
+import { Transaction, Connection, Ed25519Keypair } from 'bigchaindb-driver';
 import prisma from '../../../lib/prisma';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Buffer } from 'Buffer';
+
 export class BigchaindbAdapter {
   async createTransaction(event, product, keypair) {
     this.verifyKeypair(keypair);
@@ -24,7 +26,6 @@ export class BigchaindbAdapter {
 
     // Create a connection to the BigchainDB API
     const conn = new Connection(process.env.API_PATH);
-
     // Try to sign the transaction and publish it
     let txSigned;
     try {
@@ -118,7 +119,8 @@ export class BigchaindbAdapter {
 
   // Generate an ed25519 keypair
   async generateKeys() {
-    return await new Ed25519Keypair();
+    const keypair = await new Ed25519Keypair();
+    return this.verifyKeypair(keypair);
   }
 
   async getTransactions(id) {
@@ -176,8 +178,33 @@ export class BigchaindbAdapter {
   }
 
   // Verify the keypair
-  verifyKeypair(keypair) {
+  async verifyKeypair(keypair) {
     // If the keypair doesn't contain a publicKey and a privateKey, throw an error
+    // Verifiy with crypto if the publicKey is refferd to the privateKey
+    console.log('verify the validity of the keypair...');
+    console.log('\n\n bigchaindb');
+    console.log(keypair);
+
+    const arPub = new TextEncoder().encode(keypair.publicKey);
+    const arPriv = new TextEncoder().encode(keypair.privateKey);
+    console.log('arPub');
+    console.log(arPub);
+    console.log('arPriv');
+    console.log(arPriv);
+
+    const bufPub = Buffer.from(arPub);
+    const bufPriv = Buffer.from(arPriv);
+
+    //const secret = bufPriv.includes(bufPub);
+    const secret = bufPriv.equals(bufPub);
+    console.log(secret);
+
+
+
+
+
+
+
     if (!keypair.publicKey || !keypair.privateKey) {
       throw new HttpException(
         'We are sorry, this keypair is not valid. It must contains a publicKey and a privateKey',
