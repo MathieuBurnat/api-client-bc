@@ -33,6 +33,7 @@ model Product {
   createdAt         DateTime @default(now()) @map(name: "created_at")
   updatedAt         DateTime @updatedAt @map(name: "updated_at")
   status            Status   @default(READY_TO_USE)
+  status            ProductStatus   @default(READY_TO_USE)
 
   //owner relation
   owner   Client? @relation(fields: [ownerId], references: [id])
@@ -47,6 +48,7 @@ model Product {
 }
 
 enum Status {
+enum ProductStatus {
   READY_TO_USE
   UNDER_REPAIR
   OUT
