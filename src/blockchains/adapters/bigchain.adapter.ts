@@ -6,40 +6,40 @@ import { encode, decode } from 'bs58';
 
 export class BigchaindbAdapter {
   async createTransaction(event, product, keypair) {
-    // USELESS this.verifyKeypair(keypair);
+    if (this.verifyKeypair(keypair)) {
+      const tx = Transaction.makeCreateTransaction(
+        // Store the event, the product, and a timestamp
+        { event: event, product: product, created_at: new Date().toString() },
 
-    const tx = Transaction.makeCreateTransaction(
-      // Store the event, the product, and a timestamp
-      { event: event, product: product, created_at: new Date().toString() },
+        // Metadata contains information about the transaction itself
+        // (can be `null` if not needed)
+        { what: event.content },
 
-      // Metadata contains information about the transaction itself
-      // (can be `null` if not needed)
-      { what: event.content },
+        // A transaction needs an output
+        [
+          Transaction.makeOutput(
+            Transaction.makeEd25519Condition(keypair.publicKey),
+          ),
+        ],
+        keypair.publicKey,
+      );
 
-      // A transaction needs an output
-      [
-        Transaction.makeOutput(
-          Transaction.makeEd25519Condition(keypair.publicKey),
-        ),
-      ],
-      keypair.publicKey,
-    );
+      // Create a connection to the BigchainDB API
+      const conn = new Connection(process.env.API_PATH);
 
-    // Create a connection to the BigchainDB API
-    const conn = new Connection(process.env.API_PATH);
-
-    // Try to sign the transaction and publish it
-    let txSigned;
-    try {
-      // Sign the transaction
-      txSigned = Transaction.signTransaction(tx, keypair.privateKey);
-      // Post the transaction to the BigchainDB API
-      return await conn
-        .postTransactionCommit(txSigned)
-        .then((retrievedTx) => retrievedTx);
-    } catch (error) {
-      console.log(error);
-      console.log('Are you sure that the private key is valid ?');
+      // Try to sign the transaction and publish it
+      let txSigned;
+      try {
+        // Sign the transaction
+        txSigned = Transaction.signTransaction(tx, keypair.privateKey);
+        // Post the transaction to the BigchainDB API
+        return await conn
+          .postTransactionCommit(txSigned)
+          .then((retrievedTx) => retrievedTx);
+      } catch (error) {
+        console.log(error);
+        console.log('Are you sure that the private key is valid ?');
+      }
     }
   }
 
