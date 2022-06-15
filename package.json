@@ -31,6 +31,7 @@
     "@nestjs/event-emitter": "^1.1.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^8.0.0",
+    "@noble/ed25519": "^1.6.0",
     "@prisma/client": "^3.14.0",
     "bigchaindb-driver": "^4.3.0",
     "class-transformer": "^0.5.1",
