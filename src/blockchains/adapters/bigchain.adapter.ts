@@ -1,6 +1,8 @@
 import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
 import prisma from '../../../lib/prisma';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import * as ed from '@noble/ed25519';
+
 export class BigchaindbAdapter {
   async createTransaction(event, product, keypair) {
     this.verifyKeypair(keypair);
@@ -184,5 +186,23 @@ export class BigchaindbAdapter {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  // Create HexToUint8Array
+  // This will convert a string to a Uint8Array
+  // Example :
+  //
+  // hex : 8507a5518ef16c2b7e9ca1409aef4af5332610ee2886355142079587cabd4009
+  // result :
+  // Uint8Array(32) [
+  //   133,   7, 165,  81, 142, 241, 108,  43,
+  //   126, 156, 161,  64, 154, 239,  74, 245,
+  //    51,  38,  16, 238,  40, 134,  53,  81,
+  //    66,   7, 149, 135, 202, 189,  64,   9
+  // ]
+  HexToUint8Array(hexString) {
+    return Uint8Array.from(
+      hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
+    );
   }
 }
