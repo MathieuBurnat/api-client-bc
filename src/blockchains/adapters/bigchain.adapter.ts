@@ -1,35 +1,46 @@
 import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
 import prisma from '../../../lib/prisma';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import * as ed from '@noble/ed25519';
+import { encode, decode } from 'bs58';
+
 export class BigchaindbAdapter {
   async createTransaction(event, product, keypair) {
-    this.verifyKeypair(keypair);
+    if (this.verifyKeypair(keypair)) {
+      const tx = Transaction.makeCreateTransaction(
+        // Store the event, the product, and a timestamp
+        { event: event, product: product, created_at: new Date().toString() },
 
-    const tx = Transaction.makeCreateTransaction(
-      // Store the event, the product, and a timestamp
-      { event: event, product: product, created_at: new Date().toString() },
+        // Metadata contains information about the transaction itself
+        // (can be `null` if not needed)
+        { what: event.content },
 
-      // Metadata contains information about the transaction itself
-      // (can be `null` if not needed)
-      { what: event.content },
+        // A transaction needs an output
+        [
+          Transaction.makeOutput(
+            Transaction.makeEd25519Condition(keypair.publicKey),
+          ),
+        ],
+        keypair.publicKey,
+      );
 
-      // A transaction needs an output
-      [
-        Transaction.makeOutput(
-          Transaction.makeEd25519Condition(keypair.publicKey),
-        ),
-      ],
-      keypair.publicKey,
-    );
+      // Create a connection to the BigchainDB API
+      const conn = new Connection(process.env.API_PATH);
 
-    // Sign the transaction with the private key
-    const txSigned = Transaction.signTransaction(tx, keypair.privateKey);
-
-    const conn = new Connection(process.env.API_PATH);
-
-    return await conn
-      .postTransactionCommit(txSigned)
-      .then((retrievedTx) => retrievedTx);
+      // Try to sign the transaction and publish it
+      let txSigned;
+      try {
+        // Sign the transaction
+        txSigned = Transaction.signTransaction(tx, keypair.privateKey);
+        // Post the transaction to the BigchainDB API
+        return await conn
+          .postTransactionCommit(txSigned)
+          .then((retrievedTx) => retrievedTx);
+      } catch (error) {
+        console.log(error);
+        console.log('Are you sure that the private key is valid ?');
+      }
+    }
   }
 
   // Get asset of a product id or an event id
@@ -110,7 +121,20 @@ export class BigchaindbAdapter {
 
   // Generate an ed25519 keypair
   async generateKeys() {
-    return await new Ed25519Keypair();
+    // Generate random private key
+    const privateKey = ed.utils.randomPrivateKey();
+
+    // Get the public key referred to the private key
+    const publicKey = await ed.getPublicKey(privateKey);
+
+    // Create the keypair by encoding it
+    // Encode rule : Uint8Array -> base58
+    const encodedKeypair = {
+      publicKey: encode(publicKey),
+      privateKey: encode(privateKey),
+    };
+
+    return encodedKeypair;
   }
 
   async getTransactions(id) {
@@ -168,13 +192,39 @@ export class BigchaindbAdapter {
   }
 
   // Verify the keypair
-  verifyKeypair(keypair) {
-    // If the keypair doesn't contain a publicKey and a privateKey, throw an error
+  async verifyKeypair(keypair) {
+    // Not valid if the keypair doesn't contain a publicKey and a privateKey
     if (!keypair.publicKey || !keypair.privateKey) {
-      throw new HttpException(
+      console.log(
         'We are sorry, this keypair is not valid. It must contains a publicKey and a privateKey',
-        HttpStatus.BAD_REQUEST,
       );
+      return false;
     }
+
+    console.log('\n\n -- [ Verify keypair ] --');
+    // Verify if the encoded keypair is valid
+    // Decode rule : base58 -> Uint8Array
+    const decodedKeypair = {
+      publicKey: decode(keypair.publicKey),
+      privateKey: decode(keypair.privateKey),
+    };
+
+    console.log('\n default Keypair');
+    console.log(keypair);
+    console.log('\n decoded Keypair');
+    console.log(decodedKeypair);
+
+    // Verify the publickey
+    // Extract the public key from the private key
+    // if the extracted public key is not the same than the public key in the keypair, the keypair is not valid !
+    const exrtactedPublickey = await ed.getPublicKey(decodedKeypair.privateKey);
+    console.log('\n extractedPublickey');
+    console.log(exrtactedPublickey);
+
+    if (Buffer.compare(decodedKeypair.publicKey, exrtactedPublickey) !== 0) {
+      console.log('The public key does not belong to the private key');
+      return false;
+    }
+    return true;
   }
 }

@@ -90,7 +90,6 @@ export class ProductListener {
 
   //save the event on the database
   async saveEventOnDataBase(event, product, keypair) {
-    console.log('\n\n[ Saving.. ]');
     console.log(keypair);
 
     const eventType = await this.eventsService.getEventType(event.type);
@@ -113,7 +112,6 @@ export class ProductListener {
 
   //save the event on the blockchain
   async saveEventOnBlockchain(event, product, keypair) {
-    console.log('\n\n[ Saving.. ]');
     const eventOnBCPost = await this.blockchainsService.createTransaction(
       event,
       product,

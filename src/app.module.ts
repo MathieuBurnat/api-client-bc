@@ -10,6 +10,7 @@ import { ProductListener } from './events/listeners/product.listener';
 import { EventsService } from './events/events.service';
 import { ConfigModule } from '@nestjs/config';
 import { BlockchainsModule } from './blockchains/blockchains.module';
+import { ProductTypesModule } from './product-types/product-types.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { BlockchainsModule } from './blockchains/blockchains.module';
     EventEmitterModule.forRoot(),
     ConfigModule.forRoot(),
     BlockchainsModule,
+    ProductTypesModule,
   ],
   controllers: [AppController],
   providers: [AppService, ProductListener, BlockchainsService, EventsService],

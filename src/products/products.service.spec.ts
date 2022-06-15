@@ -9,8 +9,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventsService } from '../events/events.service';
 import { BlockchainsService } from '../blockchains/blockchains.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
-import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-product.dto';
+import { UpdateProductWarrantyDto } from './dto/update-product-warranty-dto';
+import { UpdateClientRetriveProductDto } from './dto/update-client-retrive-product.dto';
 import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto';
 
 describe('ProductsController', () => {
@@ -25,9 +25,10 @@ describe('ProductsController', () => {
     warrantyExpiresOn: expect.any(Date),
     createdAt: expect.any(Date),
     updatedAt: expect.any(Date),
+    productTypeId: null,
   };
   const productsService = new ProductsService(new EventEmitter2());
-
+  let product;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [EventEmitterModule.forRoot()],
@@ -54,14 +55,18 @@ describe('ProductsController', () => {
       warrantyExpiresOn: new Date(
         new Date().setDate(new Date().getDate() + 360),
       ),
+      keypair: {
+        publicKey: process.env.public_key,
+        privateKey: process.env.private_key,
+      },
     };
     // Create a product via the service
-    const result = await productsService.create(createProductDto);
+    product = await productsService.create(createProductDto);
 
     // Excpect the result to be a product
-    expect(result.id).toEqual(productGoal.id);
-    expect(result.price).toEqual(productGoal.price);
-    expect(result.published).toEqual(productGoal.published);
+    expect(product.id).toEqual(productGoal.id);
+    expect(product.price).toEqual(productGoal.price);
+    expect(product.published).toEqual(productGoal.published);
   });
 
   it('Get product - Find Many', async () => {
@@ -89,6 +94,10 @@ describe('ProductsController', () => {
       ...updateProductWarrantyDto,
       id: product.id,
       delay: 360,
+      keypair: {
+        publicKey: process.env.public_key,
+        privateKey: process.env.private_key,
+      },
     };
 
     const result = await productsService.extendWarranty(
@@ -100,23 +109,24 @@ describe('ProductsController', () => {
   });
 
   it('Generate qrcode', async () => {
-    const product = await prisma.product.findFirst();
-
     let updateProductQrcodeDto = new UpdateProductQrcodeDto();
 
     updateProductQrcodeDto = {
       ...updateProductQrcodeDto,
       id: product.id,
+      keypair: {
+        publicKey: process.env.public_key,
+        privateKey: process.env.private_key,
+      },
     };
 
-    const result = await productsService.generateQrcode(updateProductQrcodeDto);
+    product = await productsService.generateQrcode(updateProductQrcodeDto);
 
-    expect(result.id).toEqual(productGoal.id);
+    expect(product.id).toEqual(productGoal.id);
   });
 
   it('Retrive product', async () => {
     const client = await prisma.client.findFirst();
-    const product = await prisma.product.findFirst();
 
     let updateClientRetriveProductDto = new UpdateClientRetriveProductDto();
 

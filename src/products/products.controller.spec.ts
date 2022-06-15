@@ -8,6 +8,7 @@ import { ProductListener } from '../events/listeners/product.listener';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventsService } from '../events/events.service';
 import { BlockchainsService } from '../blockchains/blockchains.service';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -21,7 +22,9 @@ describe('ProductsController', () => {
     warrantyExpiresOn: expect.any(Date),
     createdAt: expect.any(Date),
     updatedAt: expect.any(Date),
+    productTypeId: null,
   };
+  let product;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -51,16 +54,16 @@ describe('ProductsController', () => {
       ),
     };
     // Create a product via the service
-    const result = await prisma.product.create({
+    product = await prisma.product.create({
       data: {
         ...createProductDto,
       },
     });
 
     // Excpect the result to be a product
-    expect(result.id).toEqual(productGoal.id);
-    expect(result.price).toEqual(productGoal.price);
-    expect(result.published).toEqual(productGoal.published);
+    expect(product.id).toEqual(productGoal.id);
+    expect(product.price).toEqual(productGoal.price);
+    expect(product.published).toEqual(productGoal.published);
   });
 
   it('Get product - Find Many', async () => {
@@ -79,8 +82,21 @@ describe('ProductsController', () => {
     expect(result.published).toEqual(productGoal.published);
   });
 
+  it('Generate qrcode', async () => {
+    product = await prisma.product.update({
+      where: {
+        id: product.id,
+      },
+      data: {
+        qrcode: uuidv4(),
+      },
+    });
+
+    expect(product.id).toEqual(productGoal.id);
+    expect(product.warrantyExpiresOn).toEqual(productGoal.warrantyExpiresOn);
+  });
+
   it("Extend product's warranty", async () => {
-    const product = await prisma.product.findFirst();
     const result = await prisma.product.update({
       where: {
         id: product.id,
@@ -98,7 +114,6 @@ describe('ProductsController', () => {
 
   it('Retrive product', async () => {
     const client = await prisma.client.findFirst();
-    const product = await prisma.product.findFirst();
     const result = await prisma.product.update({
       where: {
         qrcode: product.qrcode,

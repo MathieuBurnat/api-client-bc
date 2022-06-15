@@ -1,25 +1,14 @@
-import { Decimal } from '@prisma/client/runtime';
 import { IsNotEmpty, IsNumber, Validate } from 'class-validator';
 import { IsProductExists } from '../../validations/products-validator';
 import { IsKeypairValid } from '../../validations/certified-entity-validator';
 
-export class CreateCommercialEventDto {
-  @IsNotEmpty()
-  content: string;
-
+export class UpdateProductWarrantyDto {
   @IsNotEmpty()
   @Validate(IsProductExists)
-  productId: string;
+  id: string;
 
-  @IsNotEmpty()
-  eventTypeContent: string;
-
-  @IsNotEmpty()
   @IsNumber()
-  action: Decimal;
-
-  @IsNotEmpty()
-  shall_expire_on: Date;
+  delay: number;
 
   @Validate(IsKeypairValid)
   @IsNotEmpty()

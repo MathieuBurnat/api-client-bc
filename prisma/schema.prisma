@@ -32,7 +32,7 @@ model Product {
   warrantyExpiresOn DateTime
   createdAt         DateTime @default(now()) @map(name: "created_at")
   updatedAt         DateTime @updatedAt @map(name: "updated_at")
-  status            Status   @default(READY_TO_USE)
+  status            ProductStatus   @default(READY_TO_USE)
 
   //owner relation
   owner   Client? @relation(fields: [ownerId], references: [id])
@@ -44,9 +44,20 @@ model Product {
 
   //event relation
   events Event[]
+
+  //productType relation
+  productType ProductType? @relation(fields: [productTypeId], references: [id])
+  productTypeId String?
 }
 
-enum Status {
+model ProductType {
+  id  String @id @default(cuid())
+  content String  @unique @map(name: "content")
+  slug    String  @unique @map(name: "slug")
+  products Product[]
+}
+
+enum ProductStatus {
   READY_TO_USE
   UNDER_REPAIR
   OUT

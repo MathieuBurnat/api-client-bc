@@ -3,7 +3,33 @@ import { ValidatorConstraint, ValidationArguments } from 'class-validator';
 import { Injectable } from '@nestjs/common';
 import { ValidatorConstraintInterface } from 'class-validator';
 
-@ValidatorConstraint({ name: 'IsQrcodeExist', async: true })
+@ValidatorConstraint({ name: 'IsProductExists', async: true })
+@Injectable()
+
+// This tag use an qrcode to check if it exist in the database
+export class IsProductExists implements ValidatorConstraintInterface {
+  async validate(id: string) {
+    // Get product
+    const product = await prisma.product.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    // If the product doesnt exist, return false
+    if (product) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `The product referred to the productId doesn't exist`;
+  }
+}
+
+ValidatorConstraint({ name: 'IsQrcodeExist', async: true })
 @Injectable()
 
 // This tag use an qrcode to check if it exist in the database

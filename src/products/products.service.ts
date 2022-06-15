@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductWarrantyDto } from './dto/UpdateProductWarrantyDto';
+import { UpdateProductWarrantyDto } from './dto/update-product-warranty-dto';
 import prisma from '../../lib/prisma';
-import { UpdateClientRetriveProductDto } from './dto/update-clientretrive-product.dto';
+import { UpdateClientRetriveProductDto } from './dto/update-client-retrive-product.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UpdateProductStatusDto } from './dto/update-product-status.dto';
-import { Status } from '@prisma/client';
+import { ProductStatus as Status } from '@prisma/client';
 import { UpdateProductQrcodeDto } from './dto/update-product-qrcode.dto';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,6 +26,9 @@ export class ProductsService {
     return prisma.product.findUnique({
       where: {
         id: id,
+      },
+      include: {
+        CertifiedEntity: true,
       },
     });
   }
@@ -107,13 +110,6 @@ export class ProductsService {
 
   async extendWarranty(updateProductWarrantyDto: UpdateProductWarrantyDto) {
     const currentProduct = await this.findOne(updateProductWarrantyDto.id);
-    //If the currentProduct is null, then it doesn't exist
-    if (currentProduct == null) {
-      throw new HttpException(
-        "We are sorry, this product doesn't exist.",
-        HttpStatus.BAD_REQUEST,
-      );
-    }
 
     const product = await prisma.product.update({
       where: {
