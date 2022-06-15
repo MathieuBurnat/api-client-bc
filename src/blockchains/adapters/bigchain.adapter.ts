@@ -130,27 +130,11 @@ export class BigchaindbAdapter {
     // Create the keypair by encoding it
     // Encode rule : Uint8Array -> base58
     const encodedKeypair = {
-      publicKey: 'BkXe7ZfB3PELLyFetNCCM5xjUKdw32tzSdTu3YbKYDNJ',
+      publicKey: encode(publicKey),
       privateKey: encode(privateKey),
     };
 
-    // encodedKeypair Output :
-    // {
-    //   publicKey: 'FwYyR4DUwC3SqQJYiKdLak2sAi5CVxM4o52cyYe3K5hn',
-    //   privateKey: '3vgi6qfxEucZrmCKEqcQ86C25mwiLEoz26HMajwcRjcd'
-    // }
-
-    // Verify if the encoded keypair is valid
-    console.log(await this.verifyKeypair(encodedKeypair));
-    // => true
-
-    // Try to push the transaction
-    // If it works well the encoding method is correct
-    const event = { content: 'Im in' };
-    const product = 'my product';
-
-    return this.createTransaction(event, product, encodedKeypair);
-    // 201 Ahaha win !
+    return encodedKeypair;
   }
 
   async getTransactions(id) {
