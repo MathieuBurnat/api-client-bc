@@ -1,7 +1,7 @@
 import { ProductStatus } from '@prisma/client';
 import { IsNotEmpty, Validate } from 'class-validator';
 import { IsProductExists } from '../../validations/products-validator';
-import { IsKeypairValid } from '../../validations/certified-entity-validator';
+import { IsKeypairValid, IsKeypairCertifedEntity } from '../../validations/certified-entity-validator';
 
 export class UpdateProductStatusDto {
   @IsNotEmpty()
@@ -12,6 +12,7 @@ export class UpdateProductStatusDto {
   status: ProductStatus;
 
   @Validate(IsKeypairValid)
+  @Validate(IsKeypairCertifedEntity)
   @IsNotEmpty()
   keypair: any;
 }
