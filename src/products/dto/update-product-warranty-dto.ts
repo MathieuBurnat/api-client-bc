@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, Validate } from 'class-validator';
 import { IsProductExists } from '../../validations/products-validator';
-import { IsKeypairValid } from '../../validations/certified-entity-validator';
+import { IsKeypairValid, IsKeypairCertifedEntity } from '../../validations/certified-entity-validator';
 
 export class UpdateProductWarrantyDto {
   @IsNotEmpty()
@@ -11,6 +11,7 @@ export class UpdateProductWarrantyDto {
   delay: number;
 
   @Validate(IsKeypairValid)
+  @Validate(IsKeypairCertifedEntity)
   @IsNotEmpty()
   keypair: any;
 }

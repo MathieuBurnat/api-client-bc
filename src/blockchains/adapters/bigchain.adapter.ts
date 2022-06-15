@@ -193,6 +193,8 @@ export class BigchaindbAdapter {
 
   // Verify the keypair
   async verifyKeypair(keypair) {
+    console.log('verify keypair...');
+    console.log(keypair);
     // Not valid if the keypair doesn't contain a publicKey and a privateKey
     if (!keypair.publicKey || !keypair.privateKey) {
       console.log(
