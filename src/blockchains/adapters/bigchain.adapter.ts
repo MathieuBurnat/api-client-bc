@@ -2,10 +2,11 @@ import { Ed25519Keypair, Transaction, Connection } from 'bigchaindb-driver';
 import prisma from '../../../lib/prisma';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import * as ed from '@noble/ed25519';
+import { encode, decode } from 'bs58';
 
 export class BigchaindbAdapter {
   async createTransaction(event, product, keypair) {
-    this.verifyKeypair(keypair);
+    // USELESS this.verifyKeypair(keypair);
 
     const tx = Transaction.makeCreateTransaction(
       // Store the event, the product, and a timestamp
@@ -120,7 +121,36 @@ export class BigchaindbAdapter {
 
   // Generate an ed25519 keypair
   async generateKeys() {
-    return await new Ed25519Keypair();
+    // Generate random private key
+    const privateKey = ed.utils.randomPrivateKey();
+
+    // Get the public key referred to the private key
+    const publicKey = await ed.getPublicKey(privateKey);
+
+    // Create the keypair by encoding it
+    // Encode rule : Uint8Array -> base58
+    const encodedKeypair = {
+      publicKey: 'BkXe7ZfB3PELLyFetNCCM5xjUKdw32tzSdTu3YbKYDNJ',
+      privateKey: encode(privateKey),
+    };
+
+    // encodedKeypair Output :
+    // {
+    //   publicKey: 'FwYyR4DUwC3SqQJYiKdLak2sAi5CVxM4o52cyYe3K5hn',
+    //   privateKey: '3vgi6qfxEucZrmCKEqcQ86C25mwiLEoz26HMajwcRjcd'
+    // }
+
+    // Verify if the encoded keypair is valid
+    console.log(await this.verifyKeypair(encodedKeypair));
+    // => true
+
+    // Try to push the transaction
+    // If it works well the encoding method is correct
+    const event = { content: 'Im in' };
+    const product = 'my product';
+
+    return this.createTransaction(event, product, encodedKeypair);
+    // 201 Ahaha win !
   }
 
   async getTransactions(id) {
@@ -178,31 +208,39 @@ export class BigchaindbAdapter {
   }
 
   // Verify the keypair
-  verifyKeypair(keypair) {
-    // If the keypair doesn't contain a publicKey and a privateKey, throw an error
+  async verifyKeypair(keypair) {
+    // Not valid if the keypair doesn't contain a publicKey and a privateKey
     if (!keypair.publicKey || !keypair.privateKey) {
-      throw new HttpException(
+      console.log(
         'We are sorry, this keypair is not valid. It must contains a publicKey and a privateKey',
-        HttpStatus.BAD_REQUEST,
       );
+      return false;
     }
-  }
 
-  // Create HexToUint8Array
-  // This will convert a string to a Uint8Array
-  // Example :
-  //
-  // hex : 8507a5518ef16c2b7e9ca1409aef4af5332610ee2886355142079587cabd4009
-  // result :
-  // Uint8Array(32) [
-  //   133,   7, 165,  81, 142, 241, 108,  43,
-  //   126, 156, 161,  64, 154, 239,  74, 245,
-  //    51,  38,  16, 238,  40, 134,  53,  81,
-  //    66,   7, 149, 135, 202, 189,  64,   9
-  // ]
-  HexToUint8Array(hexString) {
-    return Uint8Array.from(
-      hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
-    );
+    console.log('\n\n -- [ Verify keypair ] --');
+    // Verify if the encoded keypair is valid
+    // Decode rule : base58 -> Uint8Array
+    const decodedKeypair = {
+      publicKey: decode(keypair.publicKey),
+      privateKey: decode(keypair.privateKey),
+    };
+
+    console.log('\n default Keypair');
+    console.log(keypair);
+    console.log('\n decoded Keypair');
+    console.log(decodedKeypair);
+
+    // Verify the publickey
+    // Extract the public key from the private key
+    // if the extracted public key is not the same than the public key in the keypair, the keypair is not valid !
+    const exrtactedPublickey = await ed.getPublicKey(decodedKeypair.privateKey);
+    console.log('\n extractedPublickey');
+    console.log(exrtactedPublickey);
+
+    if (Buffer.compare(decodedKeypair.publicKey, exrtactedPublickey) !== 0) {
+      console.log('The public key does not belong to the private key');
+      return false;
+    }
+    return true;
   }
 }
